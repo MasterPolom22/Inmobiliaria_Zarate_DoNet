@@ -1,7 +1,15 @@
-var builder = WebApplication.CreateBuilder(args);
+using Inmobiliaria_Zarate_DoNet.Data;
 
+var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+
+// Inyección de conexión y repositorio
+builder.Services.AddSingleton<DbConexion>();
+builder.Services.AddScoped<PropietarioRepository>();
+builder.Services.AddScoped<InquilinoRepository>();
 
 var app = builder.Build();
 

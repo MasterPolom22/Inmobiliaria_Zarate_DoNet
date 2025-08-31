@@ -1,0 +1,41 @@
+@model IEnumerable<Inmobiliaria_Zarate_DoNet.Models.Propietario>
+
+@{
+    ViewData["Title"] = "Propietarios";
+}
+
+<h2>Listado de Propietarios</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">+ Nuevo Propietario</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>DNI</th>
+            <th>Apellido</th>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var p in Model)
+    {
+        <tr>
+            <td>@p.Dni</td>
+            <td>@p.Apellido</td>
+            <td>@p.Nombre</td>
+            <td>@p.Telefono</td>
+            <td>@p.Email</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-info btn-sm">Ver</a>
+                <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-warning btn-sm">Editar</a>
+                <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-danger btn-sm">Eliminar</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

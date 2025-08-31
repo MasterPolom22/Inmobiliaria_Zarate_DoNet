@@ -1,0 +1,98 @@
+using Microsoft.Extensions.Configuration;
+using MySql.Data.MySqlClient;
+using System.Data;
+
+public interface IInquilinoRepo {
+    Task<IEnumerable<Inquilino>> GetAllAsync();
+    Task<Inquilino?> GetByIdAsync(int id);
+    Task<int> CreateAsync(Inquilino i);
+    Task<bool> UpdateAsync(Inquilino i);
+    Task<bool> DeleteAsync(int id);
+}
+
+public class InquilinoRepo : IInquilinoRepo {
+    private readonly IDbConnectionFactory _factory;
+    public InquilinoRepo(IDbConnectionFactory f) { _factory = f; }
+
+    public async Task<IEnumerable<Inquilino>> GetAllAsync() {
+        using var cn = _factory.Create();
+        using var cmd = cn.CreateCommand();
+        cmd.CommandText = @"SELECT id, dni, Apellido, nombre, telefono, email
+                            FROM inquilino ORDER BY Apellido, nombre;";
+        await cn.OpenAsync();
+        using var rd = await cmd.ExecuteReaderAsync();
+        var list = new List<Inquilino>();
+        while (await rd.ReadAsync()) {
+            list.Add(new Inquilino {
+                Id = rd.GetInt32("id"),
+                Dni = rd.GetString("dni"),
+                Apellido = rd.GetString("Apellido"), // ¡A mayúscula!
+                Nombre = rd.GetString("nombre"),
+                Telefono = rd.IsDBNull("telefono") ? null : rd.GetString("telefono"),
+                Email = rd.IsDBNull("email") ? null : rd.GetString("email"),
+            });
+        }
+        return list;
+    }
+
+    public async Task<Inquilino?> GetByIdAsync(int id) {
+        using var cn = _factory.Create();
+        using var cmd = cn.CreateCommand();
+        cmd.CommandText = @"SELECT id, dni, Apellido, nombre, telefono, email
+                            FROM inquilino WHERE id=@id;";
+        cmd.Parameters.Add(new MySqlParameter("@id", id));
+        await cn.OpenAsync();
+        using var rd = await cmd.ExecuteReaderAsync();
+        if (await rd.ReadAsync()) {
+            return new Inquilino {
+                Id = rd.GetInt32("id"),
+                Dni = rd.GetString("dni"),
+                Apellido = rd.GetString("Apellido"),
+                Nombre = rd.GetString("nombre"),
+                Telefono = rd.IsDBNull("telefono") ? null : rd.GetString("telefono"),
+                Email = rd.IsDBNull("email") ? null : rd.GetString("email"),
+            };
+        }
+        return null;
+    }
+
+    public async Task<int> CreateAsync(Inquilino i) {
+        using var cn = _factory.Create();
+        using var cmd = cn.CreateCommand();
+        cmd.CommandText = @"INSERT INTO inquilino(dni, Apellido, nombre, telefono, email)
+                            VALUES(@dni, @ape, @nom, @tel, @mail);
+                            SELECT LAST_INSERT_ID();";
+        cmd.Parameters.Add(new MySqlParameter("@dni", i.Dni));
+        cmd.Parameters.Add(new MySqlParameter("@ape", i.Apellido)); // ¡coincide con columna!
+        cmd.Parameters.Add(new MySqlParameter("@nom", i.Nombre));
+        cmd.Parameters.Add(new MySqlParameter("@tel", (object?)i.Telefono ?? DBNull.Value));
+        cmd.Parameters.Add(new MySqlParameter("@mail", (object?)i.Email ?? DBNull.Value));
+        await cn.OpenAsync();
+        return Convert.ToInt32(await cmd.ExecuteScalarAsync());
+    }
+
+    public async Task<bool> UpdateAsync(Inquilino i) {
+        using var cn = _factory.Create();
+        using var cmd = cn.CreateCommand();
+        cmd.CommandText = @"UPDATE inquilino
+                            SET dni=@dni, Apellido=@ape, nombre=@nom, telefono=@tel, email=@mail
+                            WHERE id=@id;";
+        cmd.Parameters.Add(new MySqlParameter("@dni", i.Dni));
+        cmd.Parameters.Add(new MySqlParameter("@ape", i.Apellido));
+        cmd.Parameters.Add(new MySqlParameter("@nom", i.Nombre));
+        cmd.Parameters.Add(new MySqlParameter("@tel", (object?)i.Telefono ?? DBNull.Value));
+        cmd.Parameters.Add(new MySqlParameter("@mail", (object?)i.Email ?? DBNull.Value));
+        cmd.Parameters.Add(new MySqlParameter("@id", i.Id));
+        await cn.OpenAsync();
+        return await cmd.ExecuteNonQueryAsync() == 1;
+    }
+
+    public async Task<bool> DeleteAsync(int id) {
+        using var cn = _factory.Create();
+        using var cmd = cn.CreateCommand();
+        cmd.CommandText = @"DELETE FROM inquilino WHERE id=@id;";
+        cmd.Parameters.Add(new MySqlParameter("@id", id));
+        await cn.OpenAsync();
+        return await cmd.ExecuteNonQueryAsync() == 1;
+    }
+}

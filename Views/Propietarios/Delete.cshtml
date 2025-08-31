@@ -1,0 +1,23 @@
+@model Inmobiliaria_Zarate_DoNet.Models.Propietario
+
+@{
+    ViewData["Title"] = "Eliminar Propietario";
+}
+
+<h2>Eliminar Propietario</h2>
+
+<h4>¿Estás seguro de que deseas eliminar este propietario?</h4>
+
+<div>
+    <p><strong>DNI:</strong> @Model.Dni</p>
+    <p><strong>Apellido:</strong> @Model.Apellido</p>
+    <p><strong>Nombre:</strong> @Model.Nombre</p>
+    <p><strong>Teléfono:</strong> @Model.Telefono</p>
+    <p><strong>Email:</strong> @Model.Email</p>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

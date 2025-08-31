@@ -1,0 +1,23 @@
+@model Inmobiliaria_Zarate_DoNet.Models.Inquilino
+
+@{
+    ViewData["Title"] = "Detalles del Inquilino";
+}
+
+<h2>Detalles del Inquilino</h2>
+
+<div>
+    <p><strong>ID:</strong> @Model.Id</p>
+    <p><strong>DNI:</strong> @Model.Dni</p>
+    <p><strong>Apellido:</strong> @Model.Apellido</p>
+    <p><strong>Nombre:</strong> @Model.Nombre</p>
+    <p><strong>Teléfono:</strong> @Model.Telefono</p>
+    <p><strong>Email:</strong> @Model.Email</p>
+    <p><strong>Creado en:</strong> @Model.CreadoEn</p>
+</div>
+
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Eliminar</a>
+    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+</p>
