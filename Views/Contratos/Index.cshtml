@@ -1,0 +1,39 @@
+@model IEnumerable<Inmobiliaria_Zarate_DoNet.Models.Contrato>
+@{
+    ViewData["Title"] = "Contratos";
+}
+<h2>Contratos</h2>
+
+<p><a asp-action="Create" class="btn btn-primary">+ Nuevo Contrato</a></p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Inmueble</th>
+            <th>Inquilino</th>
+            <th>Inicio</th>
+            <th>Fin (original)</th>
+            <th>Monto</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var c in Model)
+    {
+        <tr>
+            <td>@c.InmuebleDireccion</td>
+            <td>@c.InquilinoNombre</td>
+            <td>@c.FechaInicio.ToString("yyyy-MM-dd")</td>
+            <td>@c.FechaFinOriginal.ToString("yyyy-MM-dd")</td>
+            <td>@c.MontoMensual.ToString("N2")</td>
+            <td>@c.Estado</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@c.Id" class="btn btn-info btn-sm">Ver</a>
+                <a asp-action="Edit" asp-route-id="@c.Id" class="btn btn-warning btn-sm">Editar</a>
+                <a asp-action="Delete" asp-route-id="@c.Id" class="btn btn-danger btn-sm">Eliminar</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

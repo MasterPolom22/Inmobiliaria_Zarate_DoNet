@@ -11,7 +11,7 @@ builder.Services.AddSingleton<DbConexion>();
 builder.Services.AddScoped<PropietarioRepository>();
 builder.Services.AddScoped<InquilinoRepository>();
 builder.Services.AddScoped<InmuebleRepository>();  
-
+builder.Services.AddScoped<ContratoRepository>();
 
 var app = builder.Build();
 

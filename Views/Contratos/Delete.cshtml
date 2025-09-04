@@ -1,0 +1,26 @@
+@model Inmobiliaria_Zarate_DoNet.Models.Contrato
+@{
+    ViewData["Title"] = "Eliminar Contrato";
+}
+<h2>Eliminar Contrato</h2>
+
+<h4>¿Deseás eliminar este contrato?</h4>
+
+<div class="mb-3">
+    <p><strong>Inmueble:</strong> @Model.InmuebleDireccion</p>
+    <p><strong>Inquilino:</strong> @Model.InquilinoNombre</p>
+    <p><strong>Inicio:</strong> @Model.FechaInicio.ToString("yyyy-MM-dd")</p>
+    <p><strong>Fin original:</strong> @Model.FechaFinOriginal.ToString("yyyy-MM-dd")</p>
+    <p><strong>Monto:</strong> @Model.MontoMensual.ToString("N2")</p>
+    @if (Model.FechaFinAnticipada.HasValue)
+    {
+        <p><strong>Fin anticipado:</strong> @Model.FechaFinAnticipada.Value.ToString("yyyy-MM-dd")</p>
+    }
+    <p><strong>Estado:</strong> @Model.Estado</p>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
