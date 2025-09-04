@@ -1,0 +1,43 @@
+@model IEnumerable<Inmobiliaria_Zarate_DoNet.Models.Inmueble>
+@{
+    ViewData["Title"] = "Inmuebles";
+}
+<h2>Inmuebles</h2>
+
+<p><a asp-action="Create" class="btn btn-primary">+ Nuevo Inmueble</a></p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Dirección</th>
+            <th>Uso</th>
+            <th>Amb.</th>
+            <th>Precio base</th>
+            <th>Propietario</th>
+            <th>Tipo</th>
+            <th>Disp.</th>
+            <th>Susp.</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach(var x in Model)
+    {
+        <tr>
+            <td>@x.Direccion</td>
+            <td>@x.Uso</td>
+            <td>@x.Ambientes</td>
+            <td>@x.PrecioBase.ToString("N2")</td>
+            <td>@x.PropietarioNombreCompleto</td>
+            <td>@x.TipoNombre</td>
+            <td>@(x.Disponible ? "Sí" : "No")</td>
+            <td>@(x.Suspendido ? "Sí" : "No")</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@x.Id" class="btn btn-info btn-sm">Ver</a>
+                <a asp-action="Edit" asp-route-id="@x.Id" class="btn btn-warning btn-sm">Editar</a>
+                <a asp-action="Delete" asp-route-id="@x.Id" class="btn btn-danger btn-sm">Eliminar</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

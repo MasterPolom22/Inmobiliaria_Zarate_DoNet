@@ -1,0 +1,49 @@
+@model Inmobiliaria_Zarate_DoNet.Models.Inmueble
+@{
+    ViewData["Title"] = "Detalle de Inmueble";
+}
+<h2>Detalle de Inmueble</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Dirección</dt>
+    <dd class="col-sm-9">@Model.Direccion</dd>
+
+    <dt class="col-sm-3">Propietario</dt>
+    <dd class="col-sm-9">@Model.PropietarioNombreCompleto</dd>
+
+    <dt class="col-sm-3">Tipo</dt>
+    <dd class="col-sm-9">@Model.TipoNombre</dd>
+
+    <dt class="col-sm-3">Uso</dt>
+    <dd class="col-sm-9">@Model.Uso</dd>
+
+    <dt class="col-sm-3">Ambientes</dt>
+    <dd class="col-sm-9">@Model.Ambientes</dd>
+
+    <dt class="col-sm-3">Precio base</dt>
+    <dd class="col-sm-9">@Model.PrecioBase.ToString("N2")</dd>
+
+    <dt class="col-sm-3">Coordenadas</dt>
+    <dd class="col-sm-9">
+        @if (Model.Latitud.HasValue && Model.Longitud.HasValue)
+        {
+            <span>@Model.Latitud, @Model.Longitud</span>
+        }
+        else
+        {
+            <span>-</span>
+        }
+    </dd>
+
+    <dt class="col-sm-3">Disponible</dt>
+    <dd class="col-sm-9">@(Model.Disponible ? "Sí" : "No")</dd>
+
+    <dt class="col-sm-3">Suspendido</dt>
+    <dd class="col-sm-9">@(Model.Suspendido ? "Sí" : "No")</dd>
+</dl>
+
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Eliminar</a>
+    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+</p>

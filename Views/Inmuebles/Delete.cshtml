@@ -1,0 +1,21 @@
+@model Inmobiliaria_Zarate_DoNet.Models.Inmueble
+@{
+    ViewData["Title"] = "Eliminar Inmueble";
+}
+<h2>Eliminar Inmueble</h2>
+
+<h4>¿Querés eliminar este inmueble?</h4>
+<div class="mb-3">
+    <p><strong>Dirección:</strong> @Model.Direccion</p>
+    <p><strong>Propietario:</strong> @Model.PropietarioNombreCompleto</p>
+    <p><strong>Tipo:</strong> @Model.TipoNombre</p>
+    <p><strong>Uso:</strong> @Model.Uso</p>
+    <p><strong>Ambientes:</strong> @Model.Ambientes</p>
+    <p><strong>Precio base:</strong> @Model.PrecioBase.ToString("N2")</p>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id"/>
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
