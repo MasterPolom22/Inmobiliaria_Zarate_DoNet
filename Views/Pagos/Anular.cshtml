@@ -1,0 +1,18 @@
+@model Inmobiliaria_Zarate_DoNet.Models.Pago
+@{
+    ViewData["Title"] = "Anular Pago";
+}
+<h2>Anular Pago</h2>
+
+<div class="mb-3">
+    <p><strong>Contrato:</strong> @Model.ContratoResumen</p>
+    <p><strong>Número:</strong> @Model.Numero</p>
+    <p><strong>Fecha:</strong> @Model.Fecha.ToString("yyyy-MM-dd")</p>
+    <p><strong>Importe:</strong> @Model.Importe.ToString("N2")</p>
+</div>
+
+<form asp-action="Anular" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Confirmar anulación</button>
+    <a asp-action="Index" asp-route-contratoId="@Model.ContratoId" class="btn btn-secondary">Cancelar</a>
+</form>

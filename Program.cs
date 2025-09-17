@@ -10,8 +10,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<DbConexion>();
 builder.Services.AddScoped<PropietarioRepository>();
 builder.Services.AddScoped<InquilinoRepository>();
-builder.Services.AddScoped<InmuebleRepository>();  
+builder.Services.AddScoped<InmuebleRepository>();
 builder.Services.AddScoped<ContratoRepository>();
+builder.Services.AddScoped<PagoRepository>();
 
 var app = builder.Build();
 
