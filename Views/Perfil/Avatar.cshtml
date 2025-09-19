@@ -1,0 +1,29 @@
+@model Inmobiliaria_Zarate_DoNet.Models.Usuario
+@{
+    ViewData["Title"] = "Mi Perfil";
+}
+<h2>@ViewData["Title"]</h2>
+
+@if (TempData["Ok"] != null) {
+    <div class="alert alert-success">@TempData["Ok"]</div>
+}
+
+<div class="mb-3">
+    <img src="@ViewBag.AvatarUrl" alt="avatar" style="width:150px;height:150px;border-radius:50%;object-fit:cover;">
+</div>
+
+<form asp-action="Avatar" method="post" enctype="multipart/form-data" class="mb-3">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group mb-3">
+        <input type="file" name="archivo" accept=".jpg,.jpeg,.png" class="form-control" />
+        <small class="text-muted">JPG/PNG hasta 2 MB.</small>
+    </div>
+    <button class="btn btn-primary" type="submit">Actualizar avatar</button>
+</form>
+
+<form asp-action="EliminarAvatar" method="post">
+    @Html.AntiForgeryToken()
+    <button class="btn btn-danger" type="submit">Eliminar avatar</button>
+    <a asp-action="Datos" class="btn btn-secondary">Volver</a>
+</form>

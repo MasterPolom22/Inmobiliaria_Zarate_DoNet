@@ -195,9 +195,19 @@ namespace Inmobiliaria_Zarate_DoNet.Data
 
 
 
+        public int CountUsers()
+        {
+            using var conn = _db.CrearConexion();
+            using var cmd = new MySql.Data.MySqlClient.MySqlCommand("SELECT COUNT(*) FROM usuario", conn);
+            return Convert.ToInt32(cmd.ExecuteScalar());
+        }
 
 
-         public Usuario? GetByEmail(string email)
+
+
+
+
+        public Usuario? GetByEmail(string email)
         {
             using var conn = _db.CrearConexion();
             const string sql = @"SELECT id, nombre, apellido, email, password_hash, rol, activo, creado_en
@@ -207,7 +217,8 @@ namespace Inmobiliaria_Zarate_DoNet.Data
             using var rd = cmd.ExecuteReader();
             if (!rd.Read()) return null;
 
-            return new Usuario{
+            return new Usuario
+            {
                 Id = rd.GetInt32("id"),
                 Nombre = rd.GetString("nombre"),
                 Apellido = rd.GetString("apellido"),
@@ -223,5 +234,5 @@ namespace Inmobiliaria_Zarate_DoNet.Data
 
 
 
-    
+
 }

@@ -9,7 +9,8 @@ builder.Services.AddControllersWithViews();
 
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddHttpContextAccessor();      // para leer Session en filtros/vistas
+builder.Services.AddHttpContextAccessor(); 
+builder.Services.AddDistributedMemoryCache();     // para leer Session en filtros/vistas
 builder.Services.AddSession(options => {
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;

@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Inmobiliaria_Zarate_DoNet.Data;
 using Inmobiliaria_Zarate_DoNet.Utils;
 
-
 namespace Inmobiliaria_Zarate_DoNet.Controllers
 {
     public class AuthController : Controller
@@ -22,8 +21,12 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
         public IActionResult Login(string email, string password, string? returnUrl = null)
         {
             email = (email ?? "").Trim().ToLowerInvariant();
-            if (string.IsNullOrWhiteSpace(email)) ModelState.AddModelError(nameof(email), "Email es obligatorio");
-            if (string.IsNullOrWhiteSpace(password)) ModelState.AddModelError(nameof(password), "Contraseña es obligatoria");
+
+            if (string.IsNullOrWhiteSpace(email))
+                ModelState.AddModelError(nameof(email), "Email es obligatorio");
+            if (string.IsNullOrWhiteSpace(password))
+                ModelState.AddModelError(nameof(password), "Contraseña es obligatoria");
+
             if (!ModelState.IsValid) return View();
 
             var u = _repo.GetByEmail(email);
@@ -52,5 +55,13 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
+
+
+
+        
+
+
+
+
     }
 }
