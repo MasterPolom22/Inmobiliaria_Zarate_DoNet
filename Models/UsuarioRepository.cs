@@ -192,5 +192,36 @@ namespace Inmobiliaria_Zarate_DoNet.Data
                 }
             }
         }
+
+
+
+
+
+         public Usuario? GetByEmail(string email)
+        {
+            using var conn = _db.CrearConexion();
+            const string sql = @"SELECT id, nombre, apellido, email, password_hash, rol, activo, creado_en
+                                 FROM usuario WHERE email=@e LIMIT 1";
+            using var cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@e", email.ToLower().Trim());
+            using var rd = cmd.ExecuteReader();
+            if (!rd.Read()) return null;
+
+            return new Usuario{
+                Id = rd.GetInt32("id"),
+                Nombre = rd.GetString("nombre"),
+                Apellido = rd.GetString("apellido"),
+                Email = rd.GetString("email"),
+                PasswordHash = rd.GetString("password_hash"),
+                Rol = Enum.Parse<Rol>(rd.GetString("rol")),
+                Activo = rd.GetBoolean("activo"),
+                CreadoEn = rd.GetDateTime("creado_en"),
+            };
+        }
     }
+
+
+
+
+    
 }

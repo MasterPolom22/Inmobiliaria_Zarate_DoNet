@@ -7,6 +7,18 @@ builder.Services.AddControllersWithViews();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+
+builder.Services.AddControllersWithViews();
+builder.Services.AddHttpContextAccessor();      // para leer Session en filtros/vistas
+builder.Services.AddSession(options => {
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.IdleTimeout = TimeSpan.FromHours(0.2);
+});
+
+
+
+
 // Inyección de conexión y repositorio
 builder.Services.AddSingleton<DbConexion>();
 builder.Services.AddScoped<PropietarioRepository>();
@@ -34,6 +46,11 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+
+app.UseStaticFiles();
+app.UseRouting();
+
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
