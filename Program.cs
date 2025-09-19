@@ -1,4 +1,5 @@
 using Inmobiliaria_Zarate_DoNet.Data;
+using Inmobiliaria_Zarate_DoNet.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -13,6 +14,9 @@ builder.Services.AddScoped<InquilinoRepository>();
 builder.Services.AddScoped<InmuebleRepository>();
 builder.Services.AddScoped<ContratoRepository>();
 builder.Services.AddScoped<PagoRepository>();
+builder.Services.AddScoped<UsuarioRepository>();
+
+
 
 var app = builder.Build();
 

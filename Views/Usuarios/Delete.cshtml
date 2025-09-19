@@ -1,0 +1,15 @@
+@model Inmobiliaria_Zarate_DoNet.Models.Usuario
+
+@{
+    ViewData["Title"] = "Eliminar Usuario";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h4>¿Seguro que querés eliminar a @Model.Nombre @Model.Apellido?</h4>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
