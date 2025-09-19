@@ -1,0 +1,9 @@
+Usuarios importante:
+
+ADMIN
+admin@gmail.com
+123
+
+EMPLEADO
+empleado@gmail.com
+123

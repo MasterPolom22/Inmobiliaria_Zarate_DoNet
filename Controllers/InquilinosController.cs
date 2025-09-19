@@ -2,9 +2,11 @@ using Inmobiliaria_Zarate_DoNet.Data;
 using Inmobiliaria_Zarate_DoNet.Models;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
+using Inmobiliaria_Zarate_DoNet.Filters;
 
 namespace Inmobiliaria_Zarate_DoNet.Controllers
 {
+    [AuthorizeLogin]
     public class InquilinosController : Controller
     {
         private readonly InquilinoRepository _repo;
@@ -120,6 +122,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
         }
 
         // GET: /Inquilinos/Delete/5
+        [AuthorizeRol(Roles="ADMIN")]
         public IActionResult Delete(int id)
         {
             var i = _repo.GetById(id);
@@ -128,6 +131,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
         }
 
         // POST: /Inquilinos/Delete/5
+        [AuthorizeRol(Roles="ADMIN")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)

@@ -3,9 +3,11 @@ using Inmobiliaria_Zarate_DoNet.Models;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 
+
 namespace Inmobiliaria_Zarate_DoNet.Controllers
 {
-    public class PagosController : Controller
+    
+       public class PagosController : Controller
     {
         private readonly PagoRepository _repo;
         private readonly ContratoRepository _contratos;
@@ -53,36 +55,36 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
 
         // CREATE POST
         [HttpPost]
-[ValidateAntiForgeryToken]
-public IActionResult Create(Pago p)
-{
-    if (p.ContratoId <= 0) ModelState.AddModelError(nameof(p.ContratoId), "Contrato inválido.");
-    if (p.Fecha == default) ModelState.AddModelError(nameof(p.Fecha), "Fecha requerida.");
-    if (string.IsNullOrWhiteSpace(p.Detalle) || p.Detalle.Length > 200)
-        ModelState.AddModelError(nameof(p.Detalle), "Detalle obligatorio (máx. 200).");
-    if (p.Importe < 0) ModelState.AddModelError(nameof(p.Importe), "Importe debe ser ≥ 0.");
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Pago p)
+        {
+            if (p.ContratoId <= 0) ModelState.AddModelError(nameof(p.ContratoId), "Contrato inválido.");
+            if (p.Fecha == default) ModelState.AddModelError(nameof(p.Fecha), "Fecha requerida.");
+            if (string.IsNullOrWhiteSpace(p.Detalle) || p.Detalle.Length > 200)
+                ModelState.AddModelError(nameof(p.Detalle), "Detalle obligatorio (máx. 200).");
+            if (p.Importe < 0) ModelState.AddModelError(nameof(p.Importe), "Importe debe ser ≥ 0.");
 
-    if (!ModelState.IsValid) return View(p);
+            if (!ModelState.IsValid) return View(p);
 
-    p.CreadoPor = 1; // TODO: tomar del usuario autenticado
+            p.CreadoPor = 1; // TODO: tomar del usuario autenticado
 
-    try
-    {
-        var id = _repo.Create(p);
-        TempData["Ok"] = "Pago registrado.";
-        return RedirectToAction(nameof(Index), new { contratoId = p.ContratoId });
-    }
-    catch (MySqlException ex) when (ex.Number == 1644) // por si hay SIGNALs en tu BD
-    {
-        ModelState.AddModelError("", ex.Message);
-        return View(p);
-    }
-    catch (Exception ex)
-    {
-        ModelState.AddModelError("", $"Error: {ex.Message}");
-        return View(p);
-    }
-}
+            try
+            {
+                var id = _repo.Create(p);
+                TempData["Ok"] = "Pago registrado.";
+                return RedirectToAction(nameof(Index), new { contratoId = p.ContratoId });
+            }
+            catch (MySqlException ex) when (ex.Number == 1644) // por si hay SIGNALs en tu BD
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(p);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Error: {ex.Message}");
+                return View(p);
+            }
+        }
 
 
         // ANULAR GET (confirmación)

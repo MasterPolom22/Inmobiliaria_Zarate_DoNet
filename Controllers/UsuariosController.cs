@@ -3,9 +3,13 @@ using Inmobiliaria_Zarate_DoNet.Models;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using System.Net.Mail;
+using Inmobiliaria_Zarate_DoNet.Filters;
+
 
 namespace Inmobiliaria_Zarate_DoNet.Controllers
 {
+    [AuthorizeLogin]
+    [AuthorizeRol(Roles="ADMIN")]
     // [Authorize(Roles="ADMIN")]
     public class UsuariosController : Controller
     {

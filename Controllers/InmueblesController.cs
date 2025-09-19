@@ -3,9 +3,11 @@ using Inmobiliaria_Zarate_DoNet.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MySql.Data.MySqlClient;
+using Inmobiliaria_Zarate_DoNet.Filters;
 
 namespace Inmobiliaria_Zarate_DoNet.Controllers
 {
+    [AuthorizeLogin]
     public class InmueblesController : Controller
     {
         private readonly InmuebleRepository _repo;
@@ -41,7 +43,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             return View(lista);
         }
 
-        // ====== DETAILS ======
+        // ====== DETAILS
         public IActionResult Details(int id)
         {
             var x = _repo.GetById(id);
@@ -49,14 +51,14 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             return View(x);
         }
 
-        // ====== CREATE GET ======
+        // ====== CREATE GET
         public IActionResult Create()
         {
             CargarCombos();
             return View(new Inmueble { Uso = UsoInmueble.RESIDENCIAL, Disponible = true, Suspendido = false });
         }
 
-        // ====== CREATE POST ======
+        // ====== CREATE POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Inmueble x)
@@ -94,7 +96,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             }
         }
 
-        // ====== EDIT GET ======
+        // ====== EDIT GET 
         public IActionResult Edit(int id)
         {
             var x = _repo.GetById(id);
@@ -103,7 +105,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             return View(x);
         }
 
-        // ====== EDIT POST ======
+        // ====== EDIT POST 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Inmueble x)
@@ -143,7 +145,8 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             }
         }
 
-        // ====== DELETE GET ======
+        // ====== DELETE GET 
+        [AuthorizeRol(Roles="ADMIN")]
         public IActionResult Delete(int id)
         {
             var x = _repo.GetById(id);
@@ -152,6 +155,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
         }
 
         // ====== DELETE POST ======
+        [AuthorizeRol(Roles="ADMIN")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)

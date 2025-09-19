@@ -1,5 +1,8 @@
 @model Inmobiliaria_Zarate_DoNet.Models.Contrato
+@using Inmobiliaria_Zarate_DoNet.Utils
 @{
+    var rol = Context.Session.GetString(SessionKeys.UserRol);
+
     ViewData["Title"] = "Detalle de Contrato";
 }
 <h2>Detalle de Contrato</h2>

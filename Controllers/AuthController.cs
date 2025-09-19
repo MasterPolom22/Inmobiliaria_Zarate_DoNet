@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Inmobiliaria_Zarate_DoNet.Data;
 using Inmobiliaria_Zarate_DoNet.Utils;
 
+
 namespace Inmobiliaria_Zarate_DoNet.Controllers
 {
     public class AuthController : Controller

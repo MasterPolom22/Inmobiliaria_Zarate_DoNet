@@ -1,5 +1,7 @@
 @model IEnumerable<Inmobiliaria_Zarate_DoNet.Models.Pago>
+@using Inmobiliaria_Zarate_DoNet.Utils
 @{
+    
     ViewData["Title"] = "Pagos";
     var contratoId = (int)ViewBag.ContratoId;
     string resumen = ViewBag.ContratoResumen as string ?? "";

@@ -3,9 +3,12 @@ using Inmobiliaria_Zarate_DoNet.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MySql.Data.MySqlClient;
+using Inmobiliaria_Zarate_DoNet.Filters;
+
 
 namespace Inmobiliaria_Zarate_DoNet.Controllers
 {
+    [AuthorizeLogin]
     public class ContratosController : Controller
     {
         private readonly ContratoRepository _repo;
@@ -31,7 +34,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             return View(lista);
         }
 
-        // DETAILS
+        // detallesz
         public IActionResult Details(int id)
         {
             var c = _repo.GetById(id);
@@ -39,7 +42,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             return View(c);
         }
 
-        // CREATE GET
+        // crear---
         public IActionResult Create()
         {
             CargarCombos();
@@ -57,7 +60,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Contrato c)
         {
-            // Validaciones básicas UI (doble red con triggers)
+            
             if (c.InmuebleId <= 0) ModelState.AddModelError(nameof(c.InmuebleId), "Seleccione un inmueble.");
             if (c.InquilinoId <= 0) ModelState.AddModelError(nameof(c.InquilinoId), "Seleccione un inquilino.");
             if (c.MontoMensual <= 0) ModelState.AddModelError(nameof(c.MontoMensual), "Monto mensual debe ser > 0.");
@@ -73,12 +76,12 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
 
             try
             {
-                if (c.CreadoPor == 0) c.CreadoPor = 1; // placeholder
+                if (c.CreadoPor == 0) c.CreadoPor = 1; 
                 var id = _repo.Create(c);
                 TempData["Ok"] = "Contrato creado correctamente.";
                 return RedirectToAction(nameof(Details), new { id });
             }
-            catch (MySqlException ex) when (ex.Number == 1644) // SIGNAL 45000 (SP/triggers)
+            catch (MySqlException ex) when (ex.Number == 1644) 
             {
                 ModelState.AddModelError("", ex.Message); // Ej: Solapamiento
                 CargarCombos(c.InmuebleId, c.InquilinoId);
@@ -129,7 +132,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
 
             try
             {
-                var rows = _repo.Update(c); // triggers validan
+                var rows = _repo.Update(c); 
                 if (rows == 0) return NotFound();
 
                 TempData["Ok"] = "Contrato actualizado.";
@@ -149,7 +152,8 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             }
         }
 
-        // DELETE GET
+        // borrar GET
+        [AuthorizeRol(Roles="ADMIN")]
         public IActionResult Delete(int id)
         {
             var c = _repo.GetById(id);
@@ -157,7 +161,8 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             return View(c);
         }
 
-        // DELETE POST
+        // borrar POST
+        [AuthorizeRol(Roles="ADMIN")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)

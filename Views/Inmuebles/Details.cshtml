@@ -1,5 +1,7 @@
 @model Inmobiliaria_Zarate_DoNet.Models.Inmueble
+@using Inmobiliaria_Zarate_DoNet.Utils
 @{
+    var rol = Context.Session.GetString(SessionKeys.UserRol);
     ViewData["Title"] = "Detalle de Inmueble";
 }
 <h2>Detalle de Inmueble</h2>
@@ -44,6 +46,9 @@
 
 <p>
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Eliminar</a>
+    @if (rol == "ADMIN")
+    {
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Borrar</a>
+    }
     <a asp-action="Index" class="btn btn-secondary">Volver</a>
 </p>

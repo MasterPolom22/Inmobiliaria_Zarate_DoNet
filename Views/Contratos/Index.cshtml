@@ -1,6 +1,9 @@
 @model IEnumerable<Inmobiliaria_Zarate_DoNet.Models.Contrato>
+@using Inmobiliaria_Zarate_DoNet.Utils;
+
 @{
     ViewData["Title"] = "Contratos";
+    var rol = Context.Session.GetString(SessionKeys.UserRol);
 }
 <h2>Contratos</h2>
 
@@ -19,21 +22,24 @@
         </tr>
     </thead>
     <tbody>
-    @foreach (var c in Model)
-    {
-        <tr>
-            <td>@c.InmuebleDireccion</td>
-            <td>@c.InquilinoNombre</td>
-            <td>@c.FechaInicio.ToString("yyyy-MM-dd")</td>
-            <td>@c.FechaFinOriginal.ToString("yyyy-MM-dd")</td>
-            <td>@c.MontoMensual.ToString("N2")</td>
-            <td>@c.Estado</td>
-            <td>
-                <a asp-action="Details" asp-route-id="@c.Id" class="btn btn-info btn-sm">Ver</a>
-                <a asp-action="Edit" asp-route-id="@c.Id" class="btn btn-warning btn-sm">Editar</a>
-                <a asp-action="Delete" asp-route-id="@c.Id" class="btn btn-danger btn-sm">Eliminar</a>
-            </td>
-        </tr>
-    }
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.InmuebleDireccion</td>
+                <td>@c.InquilinoNombre</td>
+                <td>@c.FechaInicio.ToString("yyyy-MM-dd")</td>
+                <td>@c.FechaFinOriginal.ToString("yyyy-MM-dd")</td>
+                <td>@c.MontoMensual.ToString("N2")</td>
+                <td>@c.Estado</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@c.Id" class="btn btn-info btn-sm">Ver</a>
+                    <a asp-action="Edit" asp-route-id="@c.Id" class="btn btn-warning btn-sm">Editar</a>
+                    @if (rol == "ADMIN")
+                    {
+                        <a asp-action="Delete" asp-route-id="@c.Id" class="btn btn-danger btn-sm">Borrar</a>
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

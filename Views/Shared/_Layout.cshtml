@@ -1,5 +1,6 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@using Inmobiliaria_Zarate_DoNet.Utils
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,36 +12,93 @@
 </head>
 <body>
     <header>
-         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+          <div class="container">
             <a class="navbar-brand" asp-controller="Home" asp-action="Index">Inmobiliaria</a>
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
+            @{
+                var isLogged = Context.Session.GetInt32(SessionKeys.UserId) != null;
+                var rol = Context.Session.GetString(SessionKeys.UserRol) ?? "";
+                var nombre = Context.Session.GetString(SessionKeys.UserNombre) ?? "Invitado";
+            }
+
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" asp-controller="Propietarios" asp-action="Index">Propietarios</a></li>
-                    <li class="nav-item"><a class="nav-link" asp-controller="Inquilinos" asp-action="Index">Inquilinos</a></li>
-                    <li class="nav-item"><a class="nav-link" asp-controller="Inmuebles" asp-action="Index">Inmuebles</a></li>
-                    <li class="nav-item"><a class="nav-link" asp-controller="Contratos" asp-action="Index">Contratos</a></li>
-                    <li class="nav-item"><a class="nav-link" asp-controller="Pagos" asp-action="Index">Pagos</a></li>
+                    @if (isLogged)
+                    {
+                        <li class="nav-item"><a class="nav-link" asp-controller="Propietarios" asp-action="Index">Propietarios</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Inquilinos" asp-action="Index">Inquilinos</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Inmuebles" asp-action="Index">Inmuebles</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="TiposInmuebles" asp-action="Index">Tipos de Inmuebles</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Contratos" asp-action="Index">Contratos</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Pagos" asp-action="Index">Pagos</a></li>
+
+                        @* Solo los administradores ven el ABM de Usuarios *@
+                        @if (rol == "ADMIN")
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Usuarios" asp-action="Index">Usuarios</a></li>
+                        }
+                    }
+                </ul>
+
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    @if (isLogged)
+                    {
+                        <li class="nav-item">
+                            <span class="navbar-text me-2">Hola, @nombre (@rol)</span>
+                        </li>
+                        <li class="nav-item">
+                            <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-light btn-sm">Salir</button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="btn btn-outline-light btn-sm" asp-controller="Auth" asp-action="Login">Ingresar</a>
+                        </li>
+                    }
                 </ul>
             </div>
-        </div>
-    </nav>
+          </div>
+        </nav>
     </header>
-    <div class="container">
+
+    <div class="container mt-3">
+        @* Alertas de éxito / error reutilizando TempData y ModelState *@
+        @if (TempData["Ok"] is string okMsg)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @okMsg
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                Revisa los errores del formulario.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - Inmobiliaria_Zarate_DoNet - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="border-top footer text-muted mt-4">
+        <div class="container d-flex justify-content-between align-items-center py-2">
+            <span>&copy; 2025 - Inmobiliaria_Zarate_DoNet</span>
+            <a asp-controller="Home" asp-action="Privacy">Privacidad</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
