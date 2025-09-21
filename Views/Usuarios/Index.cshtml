@@ -1,22 +1,24 @@
 @model IEnumerable<Inmobiliaria_Zarate_DoNet.Models.Usuario>
-@using Inmobiliaria_Zarate_DoNet.Utils
-
 @{
-    var rol = Context.Session.GetString(SessionKeys.UserRol);
     ViewData["Title"] = "Usuarios";
+    var esAdmin = (Context.Session.GetString("UserRol") ?? "") == "ADMIN";
 }
+<partial name="~/Views/Shared/_Alertas.cshtml" />
 
-<h2>@ViewData["Title"]</h2>
+<h2>Usuarios</h2>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Nuevo Usuario</a>
-</p>
+@if (esAdmin)
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Nuevo usuario</a>
+    </p>
+}
 
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Nombre</th>
             <th>Apellido</th>
+            <th>Nombre</th>
             <th>Email</th>
             <th>Rol</th>
             <th>Activo</th>
@@ -24,23 +26,23 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Nombre</td>
-                <td>@item.Apellido</td>
-                <td>@item.Email</td>
-                <td>@item.Rol</td>
-                <td>@(item.Activo ? "Sí" : "No")</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Ver</a>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Editar</a>
-                    @if (rol == "ADMIN")
-                    {
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Borrar</a>
-                    }
-                </td>
-            </tr>
-        }
+@foreach (var u in Model)
+{
+        <tr>
+            <td>@u.Apellido</td>
+            <td>@u.Nombre</td>
+            <td>@u.Email</td>
+            <td>@u.Rol</td>
+            <td>@(u.Activo ? "Sí" : "No")</td>
+            <td class="text-end">
+                <a asp-action="Details" asp-route-id="@u.Id" class="btn btn-outline-secondary btn-sm">Ver</a>
+                <a asp-action="Edit" asp-route-id="@u.Id" class="btn btn-outline-primary btn-sm">Editar</a>
+                @if (esAdmin)
+                {
+                    <a asp-action="Delete" asp-route-id="@u.Id" class="btn btn-outline-danger btn-sm">Borrar</a>
+                }
+            </td>
+        </tr>
+}
     </tbody>
 </table>

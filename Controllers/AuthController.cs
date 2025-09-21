@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
 using Inmobiliaria_Zarate_DoNet.Data;
 using Inmobiliaria_Zarate_DoNet.Utils;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Inmobiliaria_Zarate_DoNet.Controllers
 {
@@ -9,6 +9,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
         private readonly UsuarioRepository _repo;
         public AuthController(UsuarioRepository repo) => _repo = repo;
 
+        // Login GET
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
         {
@@ -16,17 +17,14 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             return View();
         }
 
+        // Login POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Login(string email, string password, string? returnUrl = null)
         {
             email = (email ?? "").Trim().ToLowerInvariant();
-
-            if (string.IsNullOrWhiteSpace(email))
-                ModelState.AddModelError(nameof(email), "Email es obligatorio");
-            if (string.IsNullOrWhiteSpace(password))
-                ModelState.AddModelError(nameof(password), "Contraseña es obligatoria");
-
+            if (string.IsNullOrWhiteSpace(email)) ModelState.AddModelError(nameof(email), "Email es obligatorio");
+            if (string.IsNullOrWhiteSpace(password)) ModelState.AddModelError(nameof(password), "Contraseña es obligatoria");
             if (!ModelState.IsValid) return View();
 
             var u = _repo.GetByEmail(email);
@@ -48,20 +46,13 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        // Logout
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            return RedirectToAction("Login");
+            return RedirectToAction(nameof(Login));
         }
-
-
-
-        
-
-
-
-
     }
 }

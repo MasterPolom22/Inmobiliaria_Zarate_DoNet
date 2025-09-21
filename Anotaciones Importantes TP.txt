@@ -1,9 +1,13 @@
 Usuarios importante:
 
-ADMIN
+
+admin1@gmail.com    
+pass: 123
+
 admin@gmail.com
-123
+pass:123
+
 
 EMPLEADO
-empleado@gmail.com
+empleado1@gmail.com
 123

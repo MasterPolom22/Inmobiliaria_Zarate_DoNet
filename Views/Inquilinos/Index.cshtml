@@ -1,15 +1,14 @@
 @model IEnumerable<Inmobiliaria_Zarate_DoNet.Models.Inquilino>
-@using Inmobiliaria_Zarate_DoNet.Utils
-
 @{
-    var rol = Context.Session.GetString(SessionKeys.UserRol);
     ViewData["Title"] = "Inquilinos";
+    var esAdmin = (Context.Session.GetString("UserRol") ?? "") == "ADMIN";
 }
+<partial name="~/Views/Shared/_Alertas.cshtml" />
 
-<h2>Listado de Inquilinos</h2>
+<h2>Inquilinos</h2>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">+ Nuevo Inquilino</a>
+    <a asp-action="Create" class="btn btn-primary">Nuevo inquilino</a>
 </p>
 
 <table class="table table-striped">
@@ -20,27 +19,27 @@
             <th>Nombre</th>
             <th>Teléfono</th>
             <th>Email</th>
-            <th>Acciones</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var i in Model)
-        {
-            <tr>
-                <td>@i.Dni</td>
-                <td>@i.Apellido</td>
-                <td>@i.Nombre</td>
-                <td>@i.Telefono</td>
-                <td>@i.Email</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@i.Id" class="btn btn-info btn-sm">Ver</a>
-                    <a asp-action="Edit" asp-route-id="@i.Id" class="btn btn-warning btn-sm">Editar</a>
-                    @if (rol == "ADMIN")
-                    {
-                        <a asp-action="Delete" asp-route-id="@i.Id" class="btn btn-danger btn-sm">Borrar</a>
-                    }
-                </td>
-            </tr>
-        }
+@foreach (var i in Model)
+{
+        <tr>
+            <td>@i.Dni</td>
+            <td>@i.Apellido</td>
+            <td>@i.Nombre</td>
+            <td>@i.Telefono</td>
+            <td>@i.Email</td>
+            <td class="text-end">
+                <a asp-action="Details" asp-route-id="@i.Id" class="btn btn-outline-secondary btn-sm">Ver</a>
+                <a asp-action="Edit" asp-route-id="@i.Id" class="btn btn-outline-primary btn-sm">Editar</a>
+                @if (esAdmin)
+                {
+                    <a asp-action="Delete" asp-route-id="@i.Id" class="btn btn-outline-danger btn-sm">Borrar</a>
+                }
+            </td>
+        </tr>
+}
     </tbody>
 </table>

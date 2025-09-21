@@ -1,28 +1,25 @@
 @model Inmobiliaria_Zarate_DoNet.Models.Propietario
-@using Inmobiliaria_Zarate_DoNet.Utils
-
 @{
-    var rol = Context.Session.GetString(SessionKeys.UserRol);
-    ViewData["Title"] = "Detalles del Propietario";
+    ViewData["Title"] = "Detalle de propietario";
+    var esAdmin = (Context.Session.GetString("UserRol") ?? "") == "ADMIN";
 }
+<partial name="~/Views/Shared/_Alertas.cshtml" />
 
-<h2>Detalles del Propietario</h2>
+<h2>Detalle de propietario</h2>
 
-<div>
-    <p><strong>ID:</strong> @Model.Id</p>
-    <p><strong>DNI:</strong> @Model.Dni</p>
-    <p><strong>Apellido:</strong> @Model.Apellido</p>
-    <p><strong>Nombre:</strong> @Model.Nombre</p>
-    <p><strong>Teléfono:</strong> @Model.Telefono</p>
-    <p><strong>Email:</strong> @Model.Email</p>
-    <p><strong>Creado en:</strong> @Model.CreadoEn</p>
-</div>
+<dl class="row">
+    <dt class="col-sm-3">DNI</dt><dd class="col-sm-9">@Model.Dni</dd>
+    <dt class="col-sm-3">Apellido</dt><dd class="col-sm-9">@Model.Apellido</dd>
+    <dt class="col-sm-3">Nombre</dt><dd class="col-sm-9">@Model.Nombre</dd>
+    <dt class="col-sm-3">Teléfono</dt><dd class="col-sm-9">@Model.Telefono</dd>
+    <dt class="col-sm-3">Email</dt><dd class="col-sm-9">@Model.Email</dd>
+</dl>
 
-<p>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
-    @if (rol == "ADMIN")
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Editar</a>
+    @if (esAdmin)
     {
         <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Borrar</a>
     }
-    <a asp-action="Index" class="btn btn-secondary">Volver</a>
-</p>
+</div>

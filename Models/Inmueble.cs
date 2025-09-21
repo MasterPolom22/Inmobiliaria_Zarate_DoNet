@@ -1,3 +1,5 @@
+using System;
+
 namespace Inmobiliaria_Zarate_DoNet.Models
 {
     public enum UsoInmueble { RESIDENCIAL = 0, COMERCIAL = 1 }
@@ -7,6 +9,7 @@ namespace Inmobiliaria_Zarate_DoNet.Models
         public int Id { get; set; }
         public int PropietarioId { get; set; }
         public int TipoId { get; set; }
+
         public UsoInmueble Uso { get; set; }
         public string Direccion { get; set; } = "";
         public int Ambientes { get; set; }
@@ -15,9 +18,11 @@ namespace Inmobiliaria_Zarate_DoNet.Models
         public decimal PrecioBase { get; set; }
         public bool Disponible { get; set; }
         public bool Suspendido { get; set; }
+
+        // Auditoría
         public DateTime CreadoEn { get; set; }
 
-        // Campos “de lectura” para mostrar en la lista (JOINs)
+        // Solo lectura (JOIN)
         public string PropietarioNombreCompleto { get; set; } = "";
         public string TipoNombre { get; set; } = "";
     }

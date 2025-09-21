@@ -1,3 +1,5 @@
+using System;
+
 namespace Inmobiliaria_Zarate_DoNet.Models
 {
     public class Propietario
@@ -8,6 +10,8 @@ namespace Inmobiliaria_Zarate_DoNet.Models
         public string Nombre { get; set; } = "";
         public string? Telefono { get; set; }
         public string? Email { get; set; }
+
+        // Auditoría
         public DateTime CreadoEn { get; set; }
     }
 }

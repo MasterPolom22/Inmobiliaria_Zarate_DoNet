@@ -1,0 +1,12 @@
+@* Muestra mensajes y errores resumidos *@
+@if (TempData["Ok"] != null)
+{
+    <div class="alert alert-success">@TempData["Ok"]</div>
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        Revisá los errores del formulario.
+    </div>
+}

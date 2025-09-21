@@ -1,49 +1,51 @@
 @model IEnumerable<Inmobiliaria_Zarate_DoNet.Models.Inmueble>
-@using Inmobiliaria_Zarate_DoNet.Utils
 @{
-    var rol = Context.Session.GetString(SessionKeys.UserRol);
-
     ViewData["Title"] = "Inmuebles";
+    var esAdmin = (Context.Session.GetString("UserRol") ?? "") == "ADMIN";
 }
+<partial name="~/Views/Shared/_Alertas.cshtml" />
+
 <h2>Inmuebles</h2>
 
-<p><a asp-action="Create" class="btn btn-primary">+ Nuevo Inmueble</a></p>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Nuevo inmueble</a>
+</p>
 
 <table class="table table-striped">
     <thead>
         <tr>
             <th>Dirección</th>
+            <th>Propietario</th>
+            <th>Tipo</th>
             <th>Uso</th>
             <th>Amb.</th>
             <th>Precio base</th>
-            <th>Propietario</th>
-            <th>Tipo</th>
             <th>Disp.</th>
             <th>Susp.</th>
-            <th>Acciones</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var x in Model)
-        {
-            <tr>
-                <td>@x.Direccion</td>
-                <td>@x.Uso</td>
-                <td>@x.Ambientes</td>
-                <td>@x.PrecioBase.ToString("N2")</td>
-                <td>@x.PropietarioNombreCompleto</td>
-                <td>@x.TipoNombre</td>
-                <td>@(x.Disponible ? "Sí" : "No")</td>
-                <td>@(x.Suspendido ? "Sí" : "No")</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@x.Id" class="btn btn-info btn-sm">Ver</a>
-                    <a asp-action="Edit" asp-route-id="@x.Id" class="btn btn-warning btn-sm">Editar</a>
-                    @if (rol == "ADMIN")
-                    {
-                        <a asp-action="Delete" asp-route-id="@x.Id" class="btn btn-danger btn-sm">Borrar</a>
-                    }
-                </td>
-            </tr>
-        }
+@foreach (var x in Model)
+{
+        <tr>
+            <td>@x.Direccion</td>
+            <td>@x.PropietarioNombreCompleto</td>
+            <td>@x.TipoNombre</td>
+            <td>@x.Uso</td>
+            <td>@x.Ambientes</td>
+            <td>@x.PrecioBase.ToString("C")</td>
+            <td>@(x.Disponible ? "Sí" : "No")</td>
+            <td>@(x.Suspendido ? "Sí" : "No")</td>
+            <td class="text-end">
+                <a asp-action="Details" asp-route-id="@x.Id" class="btn btn-outline-secondary btn-sm">Ver</a>
+                <a asp-action="Edit" asp-route-id="@x.Id" class="btn btn-outline-primary btn-sm">Editar</a>
+                @if (esAdmin)
+                {
+                    <a asp-action="Delete" asp-route-id="@x.Id" class="btn btn-outline-danger btn-sm">Borrar</a>
+                }
+            </td>
+        </tr>
+}
     </tbody>
 </table>

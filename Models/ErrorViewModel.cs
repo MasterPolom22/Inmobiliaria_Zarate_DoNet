@@ -1,8 +1,10 @@
-namespace Inmobiliaria_Zarate_DoNet.Models;
+using System;
 
-public class ErrorViewModel
+namespace Inmobiliaria_Zarate_DoNet.Models
 {
-    public string? RequestId { get; set; }
-
-    public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+    public class ErrorViewModel
+    {
+        public string? RequestId { get; set; }
+        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+    }
 }

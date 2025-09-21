@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 19-09-2025 a las 23:19:18
+-- Tiempo de generación: 21-09-2025 a las 02:11:42
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -216,7 +216,9 @@ CREATE TABLE `usuario` (
 
 INSERT INTO `usuario` (`id`, `nombre`, `apellido`, `email`, `password_hash`, `rol`, `activo`, `creado_en`) VALUES
 (7, 'Lucas', 'Zarate', 'admin@gmail.com', '$2a$12$b6UA.517HZNjfv/iajhI9eOqQ8plMpoJtx8l4l2Rl05DAk7Hm5KLa', 'ADMIN', 1, '2025-09-19 18:16:26'),
-(8, 'Hugo', 'Flores', 'admin1@gmail.com', '$2a$12$lcXgPVOj8AeTt4z6nGK4TOHNx4WgLgDazskiwftxdhornMnje6ysG', 'ADMIN', 1, '2025-09-19 18:16:54');
+(8, 'Hugo', 'Flores', 'admin1@gmail.com', '$2a$12$lcXgPVOj8AeTt4z6nGK4TOHNx4WgLgDazskiwftxdhornMnje6ysG', 'ADMIN', 1, '2025-09-19 18:16:54'),
+(9, 'Lucía', 'Flores', 'empleado1@gmail.com', '$2a$12$3UZhappbQyjLhejNg32weOLoR2LPW6oa2z2OVGGZPG7qx8lw/k3Gi', 'EMPLEADO', 1, '2025-09-20 19:53:07'),
+(10, 'Daniela', 'Zavala', 'empleado2@gmail.com', '$2a$12$sCvY/BbOR/1fK/QPG5qFlejzhMUFmaJihmYIUeig7GsResx2Xvfi6', 'EMPLEADO', 1, '2025-09-20 21:08:39');
 
 --
 -- Índices para tablas volcadas
@@ -281,19 +283,19 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `contrato`
 --
 ALTER TABLE `contrato`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `inmueble`
 --
 ALTER TABLE `inmueble`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `inquilino`
 --
 ALTER TABLE `inquilino`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `pago`
@@ -305,7 +307,7 @@ ALTER TABLE `pago`
 -- AUTO_INCREMENT de la tabla `propietario`
 --
 ALTER TABLE `propietario`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `tipo_inmueble`
@@ -317,7 +319,7 @@ ALTER TABLE `tipo_inmueble`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Restricciones para tablas volcadas

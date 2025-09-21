@@ -1,21 +1,22 @@
 @model Inmobiliaria_Zarate_DoNet.Models.Inmueble
 @{
-    ViewData["Title"] = "Eliminar Inmueble";
+    ViewData["Title"] = "Eliminar inmueble";
 }
-<h2>Eliminar Inmueble</h2>
+<partial name="~/Views/Shared/_Alertas.cshtml" />
 
-<h4>¿Querés eliminar este inmueble?</h4>
-<div class="mb-3">
-    <p><strong>Dirección:</strong> @Model.Direccion</p>
-    <p><strong>Propietario:</strong> @Model.PropietarioNombreCompleto</p>
-    <p><strong>Tipo:</strong> @Model.TipoNombre</p>
-    <p><strong>Uso:</strong> @Model.Uso</p>
-    <p><strong>Ambientes:</strong> @Model.Ambientes</p>
-    <p><strong>Precio base:</strong> @Model.PrecioBase.ToString("N2")</p>
-</div>
+<h2>Eliminar inmueble</h2>
+<p class="text-danger">¿Confirmás eliminar este inmueble?</p>
+
+<dl class="row">
+    <dt class="col-sm-3">Dirección</dt><dd class="col-sm-9">@Model.Direccion</dd>
+    <dt class="col-sm-3">Propietario</dt><dd class="col-sm-9">@Model.PropietarioNombreCompleto</dd>
+    <dt class="col-sm-3">Tipo</dt><dd class="col-sm-9">@Model.TipoNombre</dd>
+    <dt class="col-sm-3">Uso</dt><dd class="col-sm-9">@Model.Uso</dd>
+</dl>
 
 <form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="Id"/>
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
     <button type="submit" class="btn btn-danger">Eliminar</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancelar</a>
 </form>

@@ -3,27 +3,25 @@ using MySql.Data.MySqlClient;
 
 namespace Inmobiliaria_Zarate_DoNet.Data
 {
+    /// <summary>ABM de Contratos + combos.</summary>
     public class ContratoRepository
     {
         private readonly DbConexion _db;
         public ContratoRepository(DbConexion db) => _db = db;
 
-        // ===== LISTAR =====
         public List<Contrato> GetAll()
         {
             var lista = new List<Contrato>();
             using var conn = _db.CrearConexion();
-
             const string sql = @"
 SELECT c.id, c.inmueble_id, c.inquilino_id, c.fecha_inicio, c.fecha_fin_original, c.monto_mensual,
        c.fecha_fin_anticipada, c.contrato_origen_id, c.estado, c.creado_por, c.terminado_por, c.creado_en,
        i.direccion AS inm_dir,
        CONCAT(inq.Apellido, ', ', inq.nombre) AS inq_nom
 FROM contrato c
-JOIN inmueble i   ON i.id = c.inmueble_id
+JOIN inmueble i    ON i.id = c.inmueble_id
 JOIN inquilino inq ON inq.id = c.inquilino_id
 ORDER BY c.creado_en DESC;";
-
             using var cmd = new MySqlCommand(sql, conn);
             using var r = cmd.ExecuteReader();
 
@@ -36,9 +34,9 @@ ORDER BY c.creado_en DESC;";
             int oFinA = r.GetOrdinal("fecha_fin_anticipada");
             int oOrig = r.GetOrdinal("contrato_origen_id");
             int oEstado = r.GetOrdinal("estado");
-            int oCrea = r.GetOrdinal("creado_por");
-            int oTerm = r.GetOrdinal("terminado_por");
-            int oCreado = r.GetOrdinal("creado_en");
+            int oCrePor = r.GetOrdinal("creado_por");
+            int oTerPor = r.GetOrdinal("terminado_por");
+            int oCre = r.GetOrdinal("creado_en");
             int oDir = r.GetOrdinal("inm_dir");
             int oNom = r.GetOrdinal("inq_nom");
 
@@ -55,9 +53,9 @@ ORDER BY c.creado_en DESC;";
                     FechaFinAnticipada = r.IsDBNull(oFinA) ? null : r.GetDateTime(oFinA),
                     ContratoOrigenId = r.IsDBNull(oOrig) ? null : r.GetInt32(oOrig),
                     Estado = Enum.Parse<EstadoContrato>(r.GetString(oEstado)),
-                    CreadoPor = r.GetInt32(oCrea),
-                    TerminadoPor = r.IsDBNull(oTerm) ? null : r.GetInt32(oTerm),
-                    CreadoEn = r.GetDateTime(oCreado),
+                    CreadoPor = r.GetInt32(oCrePor),
+                    TerminadoPor = r.IsDBNull(oTerPor) ? null : r.GetInt32(oTerPor),
+                    CreadoEn = r.GetDateTime(oCre),
                     InmuebleDireccion = r.GetString(oDir),
                     InquilinoNombre = r.GetString(oNom)
                 });
@@ -65,7 +63,6 @@ ORDER BY c.creado_en DESC;";
             return lista;
         }
 
-        // ===== DETALLE =====
         public Contrato? GetById(int id)
         {
             using var conn = _db.CrearConexion();
@@ -75,13 +72,11 @@ SELECT c.id, c.inmueble_id, c.inquilino_id, c.fecha_inicio, c.fecha_fin_original
        i.direccion AS inm_dir,
        CONCAT(inq.Apellido, ', ', inq.nombre) AS inq_nom
 FROM contrato c
-JOIN inmueble i   ON i.id = c.inmueble_id
+JOIN inmueble i    ON i.id = c.inmueble_id
 JOIN inquilino inq ON inq.id = c.inquilino_id
 WHERE c.id = @id;";
-
             using var cmd = new MySqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@id", id);
-
             using var r = cmd.ExecuteReader();
             if (!r.Read()) return null;
 
@@ -94,9 +89,9 @@ WHERE c.id = @id;";
             int oFinA = r.GetOrdinal("fecha_fin_anticipada");
             int oOrig = r.GetOrdinal("contrato_origen_id");
             int oEstado = r.GetOrdinal("estado");
-            int oCrea = r.GetOrdinal("creado_por");
-            int oTerm = r.GetOrdinal("terminado_por");
-            int oCreado = r.GetOrdinal("creado_en");
+            int oCrePor = r.GetOrdinal("creado_por");
+            int oTerPor = r.GetOrdinal("terminado_por");
+            int oCre = r.GetOrdinal("creado_en");
             int oDir = r.GetOrdinal("inm_dir");
             int oNom = r.GetOrdinal("inq_nom");
 
@@ -111,15 +106,14 @@ WHERE c.id = @id;";
                 FechaFinAnticipada = r.IsDBNull(oFinA) ? null : r.GetDateTime(oFinA),
                 ContratoOrigenId = r.IsDBNull(oOrig) ? null : r.GetInt32(oOrig),
                 Estado = Enum.Parse<EstadoContrato>(r.GetString(oEstado)),
-                CreadoPor = r.GetInt32(oCrea),
-                TerminadoPor = r.IsDBNull(oTerm) ? null : r.GetInt32(oTerm),
-                CreadoEn = r.GetDateTime(oCreado),
+                CreadoPor = r.GetInt32(oCrePor),
+                TerminadoPor = r.IsDBNull(oTerPor) ? null : r.GetInt32(oTerPor),
+                CreadoEn = r.GetDateTime(oCre),
                 InmuebleDireccion = r.GetString(oDir),
                 InquilinoNombre = r.GetString(oNom)
             };
         }
 
-        // ===== CREAR =====
         public int Create(Contrato c)
         {
             using var conn = _db.CrearConexion();
@@ -128,7 +122,6 @@ INSERT INTO contrato
 (inmueble_id, inquilino_id, fecha_inicio, fecha_fin_original, monto_mensual, fecha_fin_anticipada, contrato_origen_id, estado, creado_por, terminado_por)
 VALUES (@inmueble_id, @inquilino_id, @fecha_inicio, @fecha_fin_original, @monto_mensual, @fecha_fin_anticipada, @contrato_origen_id, 'VIGENTE', @creado_por, NULL);
 SELECT LAST_INSERT_ID();";
-
             using var cmd = new MySqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@inmueble_id", c.InmuebleId);
             cmd.Parameters.AddWithValue("@inquilino_id", c.InquilinoId);
@@ -138,12 +131,9 @@ SELECT LAST_INSERT_ID();";
             cmd.Parameters.AddWithValue("@fecha_fin_anticipada", (object?)c.FechaFinAnticipada ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@contrato_origen_id", (object?)c.ContratoOrigenId ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@creado_por", c.CreadoPor);
-
-            var result = cmd.ExecuteScalar(); // dispara triggers de solapamiento/estado
-            return Convert.ToInt32(result);
+            return Convert.ToInt32(cmd.ExecuteScalar());
         }
 
-        // ===== ACTUALIZAR =====
         public int Update(Contrato c)
         {
             using var conn = _db.CrearConexion();
@@ -158,7 +148,6 @@ SET inmueble_id = @inmueble_id,
     contrato_origen_id = @contrato_origen_id,
     terminado_por = @terminado_por
 WHERE id = @id;";
-
             using var cmd = new MySqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@inmueble_id", c.InmuebleId);
             cmd.Parameters.AddWithValue("@inquilino_id", c.InquilinoId);
@@ -169,12 +158,9 @@ WHERE id = @id;";
             cmd.Parameters.AddWithValue("@contrato_origen_id", (object?)c.ContratoOrigenId ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@terminado_por", (object?)c.TerminadoPor ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@id", c.Id);
-
-            // trigger BU ajusta estado automáticamente
             return cmd.ExecuteNonQuery();
         }
 
-        // ===== ELIMINAR =====
         public int Delete(int id)
         {
             using var conn = _db.CrearConexion();
@@ -184,7 +170,7 @@ WHERE id = @id;";
             return cmd.ExecuteNonQuery();
         }
 
-        // ===== COMBOS =====
+        // Combos
         public List<(int Id, string Texto)> GetInmueblesForSelect()
         {
             var lista = new List<(int, string)>();
@@ -193,8 +179,8 @@ WHERE id = @id;";
             using var cmd = new MySqlCommand(sql, conn);
             using var r = cmd.ExecuteReader();
             int oId = r.GetOrdinal("id");
-            int oDir = r.GetOrdinal("direccion");
-            while (r.Read()) lista.Add((r.GetInt32(oId), r.GetString(oDir)));
+            int oTxt = r.GetOrdinal("direccion");
+            while (r.Read()) lista.Add((r.GetInt32(oId), r.GetString(oTxt)));
             return lista;
         }
 
@@ -206,8 +192,8 @@ WHERE id = @id;";
             using var cmd = new MySqlCommand(sql, conn);
             using var r = cmd.ExecuteReader();
             int oId = r.GetOrdinal("id");
-            int oNom = r.GetOrdinal("nom");
-            while (r.Read()) lista.Add((r.GetInt32(oId), r.GetString(oNom)));
+            int oTxt = r.GetOrdinal("nom");
+            while (r.Read()) lista.Add((r.GetInt32(oId), r.GetString(oTxt)));
             return lista;
         }
     }

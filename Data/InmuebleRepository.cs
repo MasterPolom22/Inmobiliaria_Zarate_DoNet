@@ -3,17 +3,16 @@ using MySql.Data.MySqlClient;
 
 namespace Inmobiliaria_Zarate_DoNet.Data
 {
+    /// <summary>ABM de Inmuebles.</summary>
     public class InmuebleRepository
     {
         private readonly DbConexion _db;
         public InmuebleRepository(DbConexion db) => _db = db;
 
-        // ======== LISTAR ========
         public List<Inmueble> GetAll()
         {
             var lista = new List<Inmueble>();
             using var conn = _db.CrearConexion();
-
             const string sql = @"
 SELECT  i.id, i.propietario_id, i.tipo_id, i.uso, i.direccion, i.ambientes,
         i.latitud, i.longitud, i.precio_base, i.disponible, i.suspendido, i.creado_en,
@@ -23,7 +22,6 @@ FROM inmueble i
 JOIN propietario p ON p.id = i.propietario_id
 JOIN tipo_inmueble t ON t.id = i.tipo_id
 ORDER BY i.creado_en DESC;";
-
             using var cmd = new MySqlCommand(sql, conn);
             using var r = cmd.ExecuteReader();
 
@@ -38,7 +36,7 @@ ORDER BY i.creado_en DESC;";
             int oPrecio = r.GetOrdinal("precio_base");
             int oDisp = r.GetOrdinal("disponible");
             int oSusp = r.GetOrdinal("suspendido");
-            int oCreado = r.GetOrdinal("creado_en");
+            int oCre = r.GetOrdinal("creado_en");
             int oPropNom = r.GetOrdinal("propietario");
             int oTipoNom = r.GetOrdinal("tipo");
 
@@ -57,7 +55,7 @@ ORDER BY i.creado_en DESC;";
                     PrecioBase = r.GetDecimal(oPrecio),
                     Disponible = r.GetBoolean(oDisp),
                     Suspendido = r.GetBoolean(oSusp),
-                    CreadoEn = r.GetDateTime(oCreado),
+                    CreadoEn = r.GetDateTime(oCre),
                     PropietarioNombreCompleto = r.GetString(oPropNom),
                     TipoNombre = r.GetString(oTipoNom)
                 });
@@ -65,7 +63,6 @@ ORDER BY i.creado_en DESC;";
             return lista;
         }
 
-        // ======== DETALLE ========
         public Inmueble? GetById(int id)
         {
             using var conn = _db.CrearConexion();
@@ -78,10 +75,8 @@ FROM inmueble i
 JOIN propietario p ON p.id = i.propietario_id
 JOIN tipo_inmueble t ON t.id = i.tipo_id
 WHERE i.id = @id;";
-
             using var cmd = new MySqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@id", id);
-
             using var r = cmd.ExecuteReader();
             if (!r.Read()) return null;
 
@@ -96,7 +91,7 @@ WHERE i.id = @id;";
             int oPrecio = r.GetOrdinal("precio_base");
             int oDisp = r.GetOrdinal("disponible");
             int oSusp = r.GetOrdinal("suspendido");
-            int oCreado = r.GetOrdinal("creado_en");
+            int oCre = r.GetOrdinal("creado_en");
             int oPropNom = r.GetOrdinal("propietario");
             int oTipoNom = r.GetOrdinal("tipo");
 
@@ -113,13 +108,12 @@ WHERE i.id = @id;";
                 PrecioBase = r.GetDecimal(oPrecio),
                 Disponible = r.GetBoolean(oDisp),
                 Suspendido = r.GetBoolean(oSusp),
-                CreadoEn = r.GetDateTime(oCreado),
+                CreadoEn = r.GetDateTime(oCre),
                 PropietarioNombreCompleto = r.GetString(oPropNom),
                 TipoNombre = r.GetString(oTipoNom)
             };
         }
 
-        // ======== CREAR ========
         public int Create(Inmueble x)
         {
             using var conn = _db.CrearConexion();
@@ -128,7 +122,6 @@ INSERT INTO inmueble
 (propietario_id, tipo_id, uso, direccion, ambientes, latitud, longitud, precio_base, disponible, suspendido)
 VALUES (@propietario_id, @tipo_id, @uso, @direccion, @ambientes, @latitud, @longitud, @precio_base, @disponible, @suspendido);
 SELECT LAST_INSERT_ID();";
-
             using var cmd = new MySqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@propietario_id", x.PropietarioId);
             cmd.Parameters.AddWithValue("@tipo_id", x.TipoId);
@@ -140,12 +133,9 @@ SELECT LAST_INSERT_ID();";
             cmd.Parameters.AddWithValue("@precio_base", x.PrecioBase);
             cmd.Parameters.AddWithValue("@disponible", x.Disponible);
             cmd.Parameters.AddWithValue("@suspendido", x.Suspendido);
-
-            var result = cmd.ExecuteScalar();
-            return Convert.ToInt32(result);
+            return Convert.ToInt32(cmd.ExecuteScalar());
         }
 
-        // ======== ACTUALIZAR ========
         public int Update(Inmueble x)
         {
             using var conn = _db.CrearConexion();
@@ -162,7 +152,6 @@ SET propietario_id = @propietario_id,
     disponible     = @disponible,
     suspendido     = @suspendido
 WHERE id = @id;";
-
             using var cmd = new MySqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@propietario_id", x.PropietarioId);
             cmd.Parameters.AddWithValue("@tipo_id", x.TipoId);
@@ -175,11 +164,9 @@ WHERE id = @id;";
             cmd.Parameters.AddWithValue("@disponible", x.Disponible);
             cmd.Parameters.AddWithValue("@suspendido", x.Suspendido);
             cmd.Parameters.AddWithValue("@id", x.Id);
-
             return cmd.ExecuteNonQuery();
         }
 
-        // ======== ELIMINAR ========
         public int Delete(int id)
         {
             using var conn = _db.CrearConexion();
@@ -189,8 +176,7 @@ WHERE id = @id;";
             return cmd.ExecuteNonQuery();
         }
 
-        // ======== LISTAS PARA COMBOS ========
-
+        // Combos simples
         public List<(int Id, string NombreCompleto)> GetPropietariosForSelect()
         {
             var lista = new List<(int, string)>();

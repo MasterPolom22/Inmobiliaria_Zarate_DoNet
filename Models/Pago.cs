@@ -1,15 +1,20 @@
+using System;
+
 namespace Inmobiliaria_Zarate_DoNet.Models
 {
     public class Pago
     {
         public int Id { get; set; }
         public int ContratoId { get; set; }
-        public int Numero { get; set; }          // ahora lo asignamos nosotros
+
+        public int Numero { get; set; }
         public DateTime Fecha { get; set; }
-        public string Detalle { get; set; } = ""; // NOT NULL
-        public decimal Importe { get; set; }      // CHECK (>=0) en BD
+        public string Detalle { get; set; } = "";
+        public decimal Importe { get; set; }
         public bool Anulado { get; set; }
-        public int CreadoPor { get; set; }        // NOT NULL
+
+        // Auditoría
+        public int CreadoPor { get; set; }
         public int? AnuladoPor { get; set; }
         public DateTime CreadoEn { get; set; }
 
