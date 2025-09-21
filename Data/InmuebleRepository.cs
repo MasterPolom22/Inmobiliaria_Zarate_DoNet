@@ -202,5 +202,72 @@ WHERE id = @id;";
             while (r.Read()) lista.Add((r.GetInt32(oId), r.GetString(oNom)));
             return lista;
         }
+
+        // 1) Disponibles (no miramos contratos, solo flag de la tabla)
+        public List<Inmueble> GetDisponibles()
+        {
+            var lista = new List<Inmueble>();
+            using var conn = _db.CrearConexion();
+            const string sql = @"
+                SELECT id, propietario_id, tipo_id, uso, direccion, ambientes, latitud, longitud,
+                       precio_base, disponible, suspendido, creado_en
+                  FROM inmueble
+                 WHERE disponible = 1 AND suspendido = 0
+                 ORDER BY direccion";
+            using var cmd = new MySqlCommand(sql, conn);
+            using var rd = cmd.ExecuteReader();
+            while (rd.Read())
+            {
+                lista.Add(MapInmueble(rd));
+            }
+            return lista;
+        }
+
+        // 2) Libres entre fechas: sin contratos que se solapen con [inicio, fin]
+        public List<Inmueble> GetNoOcupadosEntre(DateTime inicio, DateTime fin)
+        {
+            var lista = new List<Inmueble>();
+            using var conn = _db.CrearConexion();
+            const string sql = @"
+                SELECT i.id, i.propietario_id, i.tipo_id, i.uso, i.direccion, i.ambientes,
+                       i.latitud, i.longitud, i.precio_base, i.disponible, i.suspendido, i.creado_en
+                  FROM inmueble i
+                 WHERE i.disponible = 1 AND i.suspendido = 0
+                   AND NOT EXISTS (
+                        SELECT 1
+                          FROM contrato c
+                         WHERE c.inmueble_id = i.id
+                           AND (c.fecha_inicio <= @fin)
+                           AND (COALESCE(c.fecha_fin_anticipada, c.fecha_fin_original) >= @inicio)
+                    )
+                 ORDER BY i.direccion;";
+            using var cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@inicio", inicio.Date);
+            cmd.Parameters.AddWithValue("@fin", fin.Date);
+            using var rd = cmd.ExecuteReader();
+            while (rd.Read())
+            {
+                lista.Add(MapInmueble(rd));
+            }
+            return lista;
+        }
+
+        private Inmueble MapInmueble(MySqlDataReader rd)
+        {
+            return new Inmueble{
+                Id = rd.GetInt32("id"),
+                PropietarioId = rd.GetInt32("propietario_id"),
+                TipoId = rd.GetInt32("tipo_id"),
+                Uso = rd.GetString("uso") == "COMERCIAL" ? UsoInmueble.COMERCIAL : UsoInmueble.RESIDENCIAL,
+                Direccion = rd.GetString("direccion"),
+                Ambientes = rd.GetInt32("ambientes"),
+                Latitud = rd.IsDBNull(rd.GetOrdinal("latitud")) ? (decimal?)null : rd.GetDecimal("latitud"),
+                Longitud = rd.IsDBNull(rd.GetOrdinal("longitud")) ? (decimal?)null : rd.GetDecimal("longitud"),
+                PrecioBase = rd.GetDecimal("precio_base"),
+                Disponible = rd.GetBoolean("disponible"),
+                Suspendido = rd.GetBoolean("suspendido"),
+                CreadoEn = rd.GetDateTime("creado_en"),
+            };
+        }
     }
 }

@@ -4,6 +4,7 @@ using Inmobiliaria_Zarate_DoNet.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MySql.Data.MySqlClient;
+using System.Linq;
 
 namespace Inmobiliaria_Zarate_DoNet.Controllers
 {
@@ -25,20 +26,46 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             ViewBag.Tipos = new SelectList(tipos, "Value", "Text", tipoId?.ToString());
 
             var usos = new List<SelectListItem> {
-                new("RESIDENCIAL", UsoInmueble.RESIDENCIAL.ToString()),
-                new("COMERCIAL", UsoInmueble.COMERCIAL.ToString())
+                new SelectListItem("RESIDENCIAL", UsoInmueble.RESIDENCIAL.ToString()),
+                new SelectListItem("COMERCIAL", UsoInmueble.COMERCIAL.ToString())
             };
             ViewBag.Usos = new SelectList(usos, "Value", "Text", (uso ?? UsoInmueble.RESIDENCIAL).ToString());
         }
 
+        // GET: /Inmuebles
         public IActionResult Index() => View(_repo.GetAll());
 
+        // GET: /Inmuebles/Details/5
         public IActionResult Details(int id)
         {
             var x = _repo.GetById(id);
             return x == null ? NotFound() : View(x);
         }
 
+        // GET: /Inmuebles/Disponibles
+        public IActionResult Disponibles()
+        {
+            var lista = _repo.GetDisponibles();
+            return View(lista);
+        }
+
+        // GET: /Inmuebles/Libres?inicio=yyyy-MM-dd&fin=yyyy-MM-dd
+        public IActionResult Libres(DateTime? inicio, DateTime? fin)
+        {
+            if (inicio == null || fin == null || fin < inicio)
+            {
+                // mostrar form para ingresar fechas
+                ViewBag.Resultados = null;
+                return View();
+            }
+
+            var lista = _repo.GetNoOcupadosEntre(inicio.Value, fin.Value);
+            ViewBag.Inicio = inicio.Value.ToString("yyyy-MM-dd");
+            ViewBag.Fin = fin.Value.ToString("yyyy-MM-dd");
+            return View(lista);
+        }
+
+        // GET: /Inmuebles/Create
         public IActionResult Create()
         {
             CargarCombos();
@@ -70,6 +97,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             }
         }
 
+        // GET: /Inmuebles/Edit/5
         public IActionResult Edit(int id)
         {
             var x = _repo.GetById(id);
@@ -105,6 +133,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             }
         }
 
+        // GET: /Inmuebles/Delete/5
         public IActionResult Delete(int id)
         {
             var x = _repo.GetById(id);

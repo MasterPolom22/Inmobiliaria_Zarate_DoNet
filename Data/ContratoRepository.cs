@@ -53,7 +53,7 @@ ORDER BY c.creado_en DESC;";
                     FechaFinAnticipada = r.IsDBNull(oFinA) ? null : r.GetDateTime(oFinA),
                     ContratoOrigenId = r.IsDBNull(oOrig) ? null : r.GetInt32(oOrig),
                     Estado = Enum.Parse<EstadoContrato>(r.GetString(oEstado)),
-                    CreadoPor = r.GetInt32(oCrePor),
+                    CreadoPor = r.IsDBNull(oCrePor) ? 0 : r.GetInt32(oCrePor),
                     TerminadoPor = r.IsDBNull(oTerPor) ? null : r.GetInt32(oTerPor),
                     CreadoEn = r.GetDateTime(oCre),
                     InmuebleDireccion = r.GetString(oDir),
@@ -61,6 +61,25 @@ ORDER BY c.creado_en DESC;";
                 });
             }
             return lista;
+        }
+
+        public bool ExisteSolapamiento(int inmuebleId, DateTime inicio, DateTime fin, int? excludeId = null)
+        {
+            using var conn = _db.CrearConexion();
+            var sql = @"
+                SELECT COUNT(1)
+                  FROM contrato c
+                 WHERE c.inmueble_id = @inmuebleId
+                   AND (@excludeId IS NULL OR c.id <> @excludeId)
+                   AND c.fecha_inicio <= @fin
+                   AND COALESCE(c.fecha_fin_anticipada, c.fecha_fin_original) >= @inicio";
+            using var cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@inmuebleId", inmuebleId);
+            cmd.Parameters.AddWithValue("@inicio", inicio.Date);
+            cmd.Parameters.AddWithValue("@fin", fin.Date);
+            cmd.Parameters.AddWithValue("@excludeId", (object?)excludeId ?? DBNull.Value);
+            var count = Convert.ToInt32(cmd.ExecuteScalar());
+            return count > 0;
         }
 
         public Contrato? GetById(int id)
@@ -106,7 +125,7 @@ WHERE c.id = @id;";
                 FechaFinAnticipada = r.IsDBNull(oFinA) ? null : r.GetDateTime(oFinA),
                 ContratoOrigenId = r.IsDBNull(oOrig) ? null : r.GetInt32(oOrig),
                 Estado = Enum.Parse<EstadoContrato>(r.GetString(oEstado)),
-                CreadoPor = r.GetInt32(oCrePor),
+                CreadoPor = r.IsDBNull(oCrePor) ? 0 : r.GetInt32(oCrePor),
                 TerminadoPor = r.IsDBNull(oTerPor) ? null : r.GetInt32(oTerPor),
                 CreadoEn = r.GetDateTime(oCre),
                 InmuebleDireccion = r.GetString(oDir),
@@ -119,14 +138,14 @@ WHERE c.id = @id;";
             using var conn = _db.CrearConexion();
             const string sql = @"
 INSERT INTO contrato
-(inmueble_id, inquilino_id, fecha_inicio, fecha_fin_original, monto_mensual, fecha_fin_anticipada, contrato_origen_id, estado, creado_por, terminado_por)
-VALUES (@inmueble_id, @inquilino_id, @fecha_inicio, @fecha_fin_original, @monto_mensual, @fecha_fin_anticipada, @contrato_origen_id, 'VIGENTE', @creado_por, NULL);
+(inmueble_id, inquilino_id, fecha_inicio, fecha_fin_original, monto_mensual, fecha_fin_anticipada, contrato_origen_id, estado, creado_por, terminado_por, creado_en)
+VALUES (@inmueble_id, @inquilino_id, @fecha_inicio, @fecha_fin_original, @monto_mensual, @fecha_fin_anticipada, @contrato_origen_id, 'VIGENTE', @creado_por, NULL, NOW());
 SELECT LAST_INSERT_ID();";
             using var cmd = new MySqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@inmueble_id", c.InmuebleId);
             cmd.Parameters.AddWithValue("@inquilino_id", c.InquilinoId);
-            cmd.Parameters.AddWithValue("@fecha_inicio", c.FechaInicio);
-            cmd.Parameters.AddWithValue("@fecha_fin_original", c.FechaFinOriginal);
+            cmd.Parameters.AddWithValue("@fecha_inicio", c.FechaInicio.Date);
+            cmd.Parameters.AddWithValue("@fecha_fin_original", c.FechaFinOriginal.Date);
             cmd.Parameters.AddWithValue("@monto_mensual", c.MontoMensual);
             cmd.Parameters.AddWithValue("@fecha_fin_anticipada", (object?)c.FechaFinAnticipada ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@contrato_origen_id", (object?)c.ContratoOrigenId ?? DBNull.Value);
@@ -151,13 +170,29 @@ WHERE id = @id;";
             using var cmd = new MySqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@inmueble_id", c.InmuebleId);
             cmd.Parameters.AddWithValue("@inquilino_id", c.InquilinoId);
-            cmd.Parameters.AddWithValue("@fecha_inicio", c.FechaInicio);
-            cmd.Parameters.AddWithValue("@fecha_fin_original", c.FechaFinOriginal);
+            cmd.Parameters.AddWithValue("@fecha_inicio", c.FechaInicio.Date);
+            cmd.Parameters.AddWithValue("@fecha_fin_original", c.FechaFinOriginal.Date);
             cmd.Parameters.AddWithValue("@monto_mensual", c.MontoMensual);
             cmd.Parameters.AddWithValue("@fecha_fin_anticipada", (object?)c.FechaFinAnticipada ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@contrato_origen_id", (object?)c.ContratoOrigenId ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@terminado_por", (object?)c.TerminadoPor ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@id", c.Id);
+            return cmd.ExecuteNonQuery();
+        }
+
+        public int Terminar(int id, DateTime fechaFinAnticipada, int terminadoPor)
+        {
+            using var conn = _db.CrearConexion();
+            const string sql = @"
+UPDATE contrato
+   SET fecha_fin_anticipada = @ffa,
+       estado = 'FINALIZADO',
+       terminado_por = @terminado_por
+ WHERE id = @id;";
+            using var cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@id", id);
+            cmd.Parameters.AddWithValue("@ffa", fechaFinAnticipada.Date);
+            cmd.Parameters.AddWithValue("@terminado_por", terminadoPor);
             return cmd.ExecuteNonQuery();
         }
 
@@ -196,5 +231,19 @@ WHERE id = @id;";
             while (r.Read()) lista.Add((r.GetInt32(oId), r.GetString(oTxt)));
             return lista;
         }
+
+         public string? GetUsuarioNombre(int? usuarioId)
+        {
+            if (usuarioId == null || usuarioId <= 0) return null;
+            using var conn = _db.CrearConexion();
+            const string sql = @"SELECT CONCAT(apellido, ', ', nombre) AS nom FROM usuario WHERE id=@id LIMIT 1;";
+            using var cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@id", usuarioId);
+            var res = cmd.ExecuteScalar();
+            return res == null || res == DBNull.Value ? null : Convert.ToString(res);
+        }
+
+
+
     }
 }

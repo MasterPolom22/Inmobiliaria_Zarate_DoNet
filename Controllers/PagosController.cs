@@ -1,126 +1,57 @@
 using Inmobiliaria_Zarate_DoNet.Data;
-using Inmobiliaria_Zarate_DoNet.Filters;
 using Inmobiliaria_Zarate_DoNet.Models;
+using Inmobiliaria_Zarate_DoNet.Filters;
+using Inmobiliaria_Zarate_DoNet.Utils;
 using Microsoft.AspNetCore.Mvc;
-using MySql.Data.MySqlClient;
 
-namespace Inmobiliaria_Zarate_DoNet.Controllers
+[AuthorizeLogin]
+public class PagosController : Controller
 {
-    [AuthorizeLogin]
-    public class PagosController : Controller
+    private readonly PagoRepository _repo;
+    public PagosController(PagoRepository repo) => _repo = repo;
+
+    public IActionResult Details(int id)
     {
-        private readonly PagoRepository _repo;
-        private readonly ContratoRepository _contratos;
-        public PagosController(PagoRepository repo, ContratoRepository contratos)
-        {
-            _repo = repo;
-            _contratos = contratos;
-        }
+        var p = _repo.GetById(id);
+        if (p == null) return NotFound();
+        return View(p);
+    }
 
-        // Lista por contrato
-        public IActionResult Index(int contratoId)
-        {
-            var pagos = _repo.GetByContrato(contratoId);
-            ViewBag.ContratoId = contratoId;
-            var c = _contratos.GetById(contratoId);
-            ViewBag.ContratoResumen = c == null ? "" : $"{c.InmuebleDireccion} – {c.InquilinoNombre}";
-            return View(pagos);
-        }
+    public IActionResult Create(int contratoId)
+    {
+        return View(new Pago { ContratoId = contratoId, Fecha = DateTime.Today });
+    }
 
-        public IActionResult Details(int id)
-        {
-            var p = _repo.GetById(id);
-            return p == null ? NotFound() : View(p);
-        }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Create(Pago p)
+    {
+        if (p.Importe <= 0) ModelState.AddModelError(nameof(p.Importe), "El importe debe ser mayor a cero");
+        if (!ModelState.IsValid) return View(p);
 
-        public IActionResult Create(int contratoId) =>
-            View(new Pago { ContratoId = contratoId, Fecha = DateTime.Today });
+        p.CreadoPor = HttpContext.Session.GetInt32(SessionKeys.UserId) ?? 0;
+        var id = _repo.Create(p);
+        TempData["Ok"] = "Pago registrado";
+        return RedirectToAction(nameof(Details), new { id });
+    }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(Pago p)
-        {
-            if (p.ContratoId <= 0) ModelState.AddModelError(nameof(p.ContratoId), "Contrato inválido.");
-            if (p.Fecha == default) ModelState.AddModelError(nameof(p.Fecha), "Fecha requerida.");
-            if (string.IsNullOrWhiteSpace(p.Detalle) || p.Detalle.Length > 200) ModelState.AddModelError(nameof(p.Detalle), "Detalle obligatorio (máx. 200).");
-            if (p.Importe < 0) ModelState.AddModelError(nameof(p.Importe), "Importe debe ser ≥ 0.");
-            if (!ModelState.IsValid) return View(p);
+    [AuthorizeRol(Roles="ADMIN")]
+    public IActionResult Anular(int id)
+    {
+        var p = _repo.GetById(id);
+        if (p == null) return NotFound();
+        if (p.Anulado) { TempData["Ok"] = "El pago ya estaba anulado."; return RedirectToAction(nameof(Details), new { id }); }
+        return View(p);
+    }
 
-            p.CreadoPor = 1; // reemplazar con usuario logueado
-
-            try
-            {
-                _repo.Create(p);
-                TempData["Ok"] = "Pago registrado.";
-                return RedirectToAction(nameof(Index), new { contratoId = p.ContratoId });
-            }
-            catch (MySqlException ex) when (ex.Number == 1644)
-            {
-                ModelState.AddModelError("", ex.Message);
-                return View(p);
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", $"Error: {ex.Message}");
-                return View(p);
-            }
-        }
-
-        public IActionResult Anular(int id)
-        {
-            var p = _repo.GetById(id);
-            if (p == null) return NotFound();
-            if (p.Anulado)
-            {
-                TempData["Ok"] = "El pago ya está anulado.";
-                return RedirectToAction(nameof(Index), new { contratoId = p.ContratoId });
-            }
-            return View(p);
-        }
-
-        [HttpPost, ActionName("Anular")]
-        [ValidateAntiForgeryToken]
-        public IActionResult AnularConfirmed(int id)
-        {
-            var p = _repo.GetById(id);
-            if (p == null) return NotFound();
-
-            try
-            {
-                _repo.Anular(id, anuladoPor: 1); // reemplazar con usuario logueado
-                TempData["Ok"] = "Pago anulado.";
-                return RedirectToAction(nameof(Index), new { contratoId = p.ContratoId });
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", $"Error: {ex.Message}");
-                return View("Anular", p);
-            }
-        }
-
-        public IActionResult Delete(int id)
-        {
-            var p = _repo.GetById(id);
-            return p == null ? NotFound() : View(p);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
-        {
-            var p = _repo.GetById(id);
-            if (p == null) return NotFound();
-            try
-            {
-                _repo.Delete(id);
-                TempData["Ok"] = "Pago eliminado.";
-                return RedirectToAction(nameof(Index), new { contratoId = p.ContratoId });
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", $"No se puede eliminar: {ex.Message}");
-                return View("Delete", p);
-            }
-        }
+    [HttpPost, ActionName("Anular")]
+    [ValidateAntiForgeryToken]
+    [AuthorizeRol(Roles="ADMIN")]
+    public IActionResult AnularConfirmed(int id)
+    {
+        var userId = HttpContext.Session.GetInt32(SessionKeys.UserId) ?? 0;
+        _repo.Anular(id, userId);
+        TempData["Ok"] = "Pago anulado";
+        return RedirectToAction(nameof(Details), new { id });
     }
 }

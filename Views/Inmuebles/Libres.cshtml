@@ -1,0 +1,56 @@
+@model IEnumerable<Inmobiliaria_Zarate_DoNet.Models.Inmueble>
+@{
+    ViewData["Title"] = "Inmuebles libres entre fechas";
+}
+<h2>@ViewData["Title"]</h2>
+
+<form class="row g-3 mb-3" method="get" asp-action="Libres">
+    <div class="col-auto">
+        <label class="form-label">Inicio</label>
+        <input type="date" name="inicio" value="@ViewBag.Inicio" class="form-control" required />
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Fin</label>
+        <input type="date" name="fin" value="@ViewBag.Fin" class="form-control" required />
+    </div>
+    <div class="col-auto align-self-end">
+        <button class="btn btn-primary">Buscar</button>
+    </div>
+</form>
+
+@if (Model != null)
+{
+    if (!Model.Any())
+    {
+        <div class="alert alert-info">No hay inmuebles libres en ese rango.</div>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Dirección</th>
+                    <th>Uso</th>
+                    <th>Amb.</th>
+                    <th>Precio base</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var i in Model)
+            {
+                <tr>
+                    <td>@i.Direccion</td>
+                    <td>@i.Uso</td>
+                    <td>@i.Ambientes</td>
+                    <td>@i.PrecioBase.ToString("C")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@i.Id" class="btn btn-info btn-sm">Ver</a>
+                        <a asp-action="Edit" asp-route-id="@i.Id" class="btn btn-warning btn-sm">Editar</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+}
