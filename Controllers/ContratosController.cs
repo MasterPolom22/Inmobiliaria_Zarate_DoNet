@@ -144,7 +144,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             {
                 var rows = _repo.Delete(id);
                 if (rows == 0) return NotFound();
-                TempData["Ok"] = "Contrato eliminado.";
+                TempData["Ok"] = "Contrato eliminado";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -155,8 +155,8 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             }
         }
 
-        // ------------------- Terminar contrato -------------------
-        // GET: /Contratos/Terminar/5
+        //erminar contrato 
+        // GET:/Terminar/5
         public IActionResult Terminar(int id)
         {
             var c = _repo.GetById(id);

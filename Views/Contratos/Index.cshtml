@@ -1,6 +1,7 @@
 @model IEnumerable<Inmobiliaria_Zarate_DoNet.Models.Contrato>
 @{
     ViewData["Title"] = "Contratos";
+    var esAdmin = (Context.Session.GetString("UserRol") ?? "") == "ADMIN";
 }
 <partial name="~/Views/Shared/_Alertas.cshtml" />
 
@@ -23,21 +24,24 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var c in Model)
-{
-        <tr>
-            <td>@c.InmuebleDireccion</td>
-            <td>@c.InquilinoNombre</td>
-            <td>@c.FechaInicio.ToString("dd/MM/yyyy")</td>
-            <td>@c.FechaFinOriginal.ToString("dd/MM/yyyy")</td>
-            <td>@c.MontoMensual.ToString("C")</td>
-            <td>@c.Estado</td>
-            <td class="text-end">
-                <a asp-action="Details" asp-route-id="@c.Id" class="btn btn-outline-secondary btn-sm">Ver</a>
-                <a asp-action="Edit" asp-route-id="@c.Id" class="btn btn-outline-primary btn-sm">Editar</a>
-                <a asp-action="Delete" asp-route-id="@c.Id" class="btn btn-outline-danger btn-sm">Borrar</a>
-            </td>
-        </tr>
-}
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.InmuebleDireccion</td>
+                <td>@c.InquilinoNombre</td>
+                <td>@c.FechaInicio.ToString("dd/MM/yyyy")</td>
+                <td>@c.FechaFinOriginal.ToString("dd/MM/yyyy")</td>
+                <td>@c.MontoMensual.ToString("C")</td>
+                <td>@c.Estado</td>
+                <td class="text-end">
+                    <a asp-action="Details" asp-route-id="@c.Id" class="btn btn-outline-secondary btn-sm">Ver</a>
+                    <a asp-action="Edit" asp-route-id="@c.Id" class="btn btn-outline-primary btn-sm">Editar</a>
+                    @if (esAdmin)
+                    {
+                        <a asp-action="Delete" asp-route-id="@c.Id" class="btn btn-outline-danger btn-sm">Borrar</a>
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
