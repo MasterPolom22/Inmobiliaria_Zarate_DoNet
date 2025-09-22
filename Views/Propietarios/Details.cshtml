@@ -1,25 +1,106 @@
 @model Inmobiliaria_Zarate_DoNet.Models.Propietario
+@using Inmobiliaria_Zarate_DoNet.Models
+@using Inmobiliaria_Zarate_DoNet.Utils
 @{
     ViewData["Title"] = "Detalle de propietario";
-    var esAdmin = (Context.Session.GetString("UserRol") ?? "") == "ADMIN";
+    var rol = Context.Session.GetString(SessionKeys.UserRol);
+    var inmuebles = ViewBag.Inmuebles as IEnumerable<Inmueble> ?? Enumerable.Empty<Inmueble>();
 }
-<partial name="~/Views/Shared/_Alertas.cshtml" />
 
-<h2>Detalle de propietario</h2>
+<h2>@ViewData["Title"]</h2>
+
+@if (TempData["Ok"] != null)
+{
+    <div class="alert alert-success">@TempData["Ok"]</div>
+}
 
 <dl class="row">
-    <dt class="col-sm-3">DNI</dt><dd class="col-sm-9">@Model.Dni</dd>
-    <dt class="col-sm-3">Apellido</dt><dd class="col-sm-9">@Model.Apellido</dd>
-    <dt class="col-sm-3">Nombre</dt><dd class="col-sm-9">@Model.Nombre</dd>
-    <dt class="col-sm-3">Teléfono</dt><dd class="col-sm-9">@Model.Telefono</dd>
-    <dt class="col-sm-3">Email</dt><dd class="col-sm-9">@Model.Email</dd>
+    <dt class="col-sm-2">DNI</dt>
+    <dd class="col-sm-10">@Model.Dni</dd>
+
+    <dt class="col-sm-2">Apellido</dt>
+    <dd class="col-sm-10">@Model.Apellido</dd>
+
+    <dt class="col-sm-2">Nombre</dt>
+    <dd class="col-sm-10">@Model.Nombre</dd>
+
+    <dt class="col-sm-2">Teléfono</dt>
+    <dd class="col-sm-10">@Model.Telefono</dd>
+
+    <dt class="col-sm-2">Email</dt>
+    <dd class="col-sm-10">@Model.Email</dd>
 </dl>
 
-<div class="mt-3">
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
     <a asp-action="Index" class="btn btn-secondary">Volver</a>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Editar</a>
-    @if (esAdmin)
-    {
-        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Borrar</a>
-    }
-</div>
+</p>
+
+<hr />
+<h4>Inmuebles del propietario</h4>
+
+@if (!inmuebles.Any())
+{
+    <div class="alert alert-info">Este propietario no tiene inmuebles cargados.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Dirección</th>
+                <th>Uso</th>
+                <th>Amb.</th>
+                <th>Precio base</th>
+                <th>Estado</th>
+                <th style="width:220px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var i in inmuebles)
+        {
+            <tr>
+                <td>@i.Direccion</td>
+                <td>@i.Uso</td>
+                <td>@i.Ambientes</td>
+                <td>@i.PrecioBase.ToString("C")</td>
+                <td>
+                    @if (i.Suspendido)
+                    {
+                        <span class="badge bg-warning text-dark">Suspendido</span>
+                    }
+                    else if (i.Disponible)
+                    {
+                        <span class="badge bg-success">Disponible</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">No disponible</span>
+                    }
+                </td>
+                <td>
+                    <a asp-controller="Inmuebles" asp-action="Details" asp-route-id="@i.Id"
+                       class="btn btn-info btn-sm">Ver</a>
+                    <a asp-controller="Inmuebles" asp-action="Edit" asp-route-id="@i.Id"
+                       class="btn btn-warning btn-sm">Editar</a>
+
+                    @* Suspender/Activar: solo ADMIN *@
+                    @if (rol == "ADMIN")
+                    {
+                        <form asp-controller="Inmuebles" asp-action="Suspender" method="post"
+                              class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@i.Id" />
+                            <input type="hidden" name="suspender" value="@(i.Suspendido ? "false" : "true")" />
+                            <button type="submit"
+                                    class="btn btn-sm @(i.Suspendido ? "btn-success" : "btn-warning")">
+                                @(i.Suspendido ? "Activar" : "Suspender")
+                            </button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

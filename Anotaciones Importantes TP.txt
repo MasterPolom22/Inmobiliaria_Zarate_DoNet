@@ -1,13 +1,51 @@
-Usuarios importante:
+Inmobiliaria Zarate – Proyecto .NET
 
+ Descripción
+Sistema de gestión inmobiliaria desarrollado en ASP.NET Core MVC con ADO.NET + MySQL.  
+Incluye ABMs completos, control de roles (ADMIN/EMPLEADO), auditoría de contratos y pagos, y módulo de perfil de usuario con avatar y cambio de contraseña.
 
-admin1@gmail.com    
-pass: 123
+ Integrante
+- Zarate Lucas(unico integrante, pregunte para hacer equipo pero no consegui)
 
-admin@gmail.com
-pass:123
+Funcionalidades principales
+  ABM de:
+  - Propietarios
+  - Inquilinos
+  - Inmuebles
+  - Tipos de Inmuebles
+  - Contratos
+  - Pagos
+  - Usuarios (solo administradores)
+- Roles:
+  - ADMIN : gestiona todo el sistema y usuarios.
+  - EMPLEADO: acceso restringido, no puede eliminar ni gestionar usuarios.
+- Perfil de usuario:
+  - Editar datos personales.
+  - Subir/eliminar avatar(imagen).
+  - Cambiar contraseña.
+- Listados especiales de Inmuebles(modulo incompleto):
+  - Disponibles (estado disponible = 1)().
+  - Libres entre fechas (sin contratos que se solapen)(sin funcionar).
+- Contratos(este modulo esta incompleto):
+  - Validación de superposición de fechas(no terminado).
+  - Auditoría: quién creó y quién terminó el contrato.
+- Pagos(este modulo esta incompleto):
+  - Auditoría: quién creó y quién anuló el pago.
+- UI: vistas  con Bootstrap, mensajes  y alertas de confirmación.
+ 
+-Base de datos: `inmobiliariadb`
+- Contiene los campos de auditoría (`creado_por`, `terminado_por`, `anulado_por`).
 
+?? Usuarios de prueba
 
-EMPLEADO
-empleado1@gmail.com
-123
+Administrador
+Email: admin@gmail.com
+Contraseña: 123
+
+Administrador1
+Email: admin1@gmail.com
+Contraseña: 123
+
+Empleado
+Email: empleado1@gmail.com
+Contraseña: 123

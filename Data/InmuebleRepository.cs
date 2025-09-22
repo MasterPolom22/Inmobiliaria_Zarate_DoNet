@@ -254,7 +254,8 @@ WHERE id = @id;";
 
         private Inmueble MapInmueble(MySqlDataReader rd)
         {
-            return new Inmueble{
+            return new Inmueble
+            {
                 Id = rd.GetInt32("id"),
                 PropietarioId = rd.GetInt32("propietario_id"),
                 TipoId = rd.GetInt32("tipo_id"),
@@ -269,5 +270,53 @@ WHERE id = @id;";
                 CreadoEn = rd.GetDateTime("creado_en"),
             };
         }
+        // 3) Por propietario
+        public List<Inmueble> GetByPropietario(int propietarioId)
+        {
+            var lista = new List<Inmueble>();
+            using var conn = _db.CrearConexion();
+            const string sql = @"
+                SELECT id, propietario_id, tipo_id, uso, direccion, ambientes,
+                       latitud, longitud, precio_base, disponible, suspendido, creado_en
+                  FROM inmueble
+                 WHERE propietario_id = @pid
+                 ORDER BY direccion;";
+            using var cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@pid", propietarioId);
+            using var rd = cmd.ExecuteReader();
+            while (rd.Read())
+            {
+                lista.Add(MapInmueble(rd)); // usa tu mapper existente
+            }
+            return lista;
+        }
+        // 4) Alternar suspendido
+
+        public int ToggleSuspender(int id, bool suspender)
+        {
+            using var conn = _db.CrearConexion();
+            const string sql = @"UPDATE inmueble SET suspendido=@s WHERE id=@id;";
+            using var cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@id", id);
+            cmd.Parameters.AddWithValue("@s", suspender);
+            return cmd.ExecuteNonQuery();
+        }
+
+         // Ajustá este mapper a tu modelo exacto si difiere
+        private Inmueble Map(MySqlDataReader rd) => new Inmueble
+        {
+            Id = rd.GetInt32("id"),
+            PropietarioId = rd.GetInt32("propietario_id"),
+            TipoId = rd.GetInt32("tipo_id"),
+            Uso = rd.GetString("uso") == "COMERCIAL" ? UsoInmueble.COMERCIAL : UsoInmueble.RESIDENCIAL,
+            Direccion = rd.GetString("direccion"),
+            Ambientes = rd.GetInt32("ambientes"),
+            Latitud = rd.IsDBNull(rd.GetOrdinal("latitud")) ? (decimal?)null : rd.GetDecimal("latitud"),
+            Longitud = rd.IsDBNull(rd.GetOrdinal("longitud")) ? (decimal?)null : rd.GetDecimal("longitud"),
+            PrecioBase = rd.GetDecimal("precio_base"),
+            Disponible = rd.GetBoolean("disponible"),
+            Suspendido = rd.GetBoolean("suspendido"),
+            CreadoEn = rd.GetDateTime("creado_en"),
+        };
     }
 }

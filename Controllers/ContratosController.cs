@@ -164,22 +164,20 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             return View(c); // la vista pedirá la fecha efectiva de finalización
         }
 
-        // POST: /Contratos/Terminar/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [AuthorizeRol(Roles = "ADMIN")] // solo admin puede terminar/forzar finalización
-        public IActionResult TerminarConfirmado(int id, DateTime fechaFinAnticipada)
+        public IActionResult Terminar(int id, DateTime fechaFinAnticipada)
         {
             var c = _repo.GetById(id);
             if (c == null) return NotFound();
 
+            // Validación de negocio
             if (fechaFinAnticipada < c.FechaInicio)
-            {
-                ModelState.AddModelError("", "La fecha de finalización no puede ser anterior al inicio.");
-                return View("Terminar", c);
-            }
+                ModelState.AddModelError("fechaFinAnticipada", "La fecha de finalización no puede ser anterior al inicio.");
 
-            var userId = HttpContext.Session.GetInt32(SessionKeys.UserId) ?? 0;
+            if (!ModelState.IsValid) return View(c);
+
+            var userId = HttpContext.Session.GetInt32("UserId") ?? 0;
             _repo.Terminar(id, fechaFinAnticipada, userId);
             TempData["Ok"] = "Contrato finalizado";
             return RedirectToAction(nameof(Details), new { id });

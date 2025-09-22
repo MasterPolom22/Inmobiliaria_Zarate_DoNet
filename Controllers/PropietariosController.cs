@@ -10,14 +10,26 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
     public class PropietariosController : Controller
     {
         private readonly PropietarioRepository _repo;
-        public PropietariosController(PropietarioRepository repo) => _repo = repo;
+        private readonly InmuebleRepository _repoInmueble; // <-- NUEVO
+
+        public PropietariosController(PropietarioRepository repo, InmuebleRepository repoInmueble)
+        {
+            _repo = repo;
+            _repoInmueble = repoInmueble;
+        }
 
         public IActionResult Index() => View(_repo.GetAll());
 
         public IActionResult Details(int id)
         {
             var p = _repo.GetById(id);
-            return p == null ? NotFound() : View(p);
+            if (p == null) return NotFound();
+
+            // Traer inmuebles del propietario para el panel secundario
+            var inmuebles = _repoInmueble.GetByPropietario(id);
+            ViewBag.Inmuebles = inmuebles;
+
+            return View(p);
         }
 
         public IActionResult Create() => View();

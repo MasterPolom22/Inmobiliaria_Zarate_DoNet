@@ -1,7 +1,6 @@
 @model Inmobiliaria_Zarate_DoNet.Models.Contrato
-@using Inmobiliaria_Zarate_DoNet.Utils  
 @{
-    ViewData["Title"] = "Finalizar contrato";
+    ViewData["Title"] = "Terminar contrato";
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -16,31 +15,16 @@
     <input type="hidden" asp-for="Id" />
 
     <div class="mb-3">
-        <label class="form-label">Inmueble</label>
-        <input class="form-control" value="@Model.InmuebleDireccion" disabled />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Inquilino</label>
-        <input class="form-control" value="@($"{Model.InquilinoNombre}, {Model.InquilinoNombre}")" disabled />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Fecha inicio</label>
-        <input class="form-control" value="@Model.FechaInicio.ToString("dd/MM/yyyy")" disabled />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Fecha fin original</label>
-        <input class="form-control" value="@Model.FechaFinOriginal.ToString("dd/MM/yyyy")" disabled />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Fecha de finalización anticipada</label>
+        <label class="form-label">Fecha fin efectiva</label>
+        <!-- IMPORTANTE: el name debe ser "fechaFinAnticipada" para matchear el parámetro del POST -->
         <input type="date" name="fechaFinAnticipada" class="form-control" required />
-        <span class="text-danger">@Html.ValidationMessage("")</span>
+        <!-- Mostrar errores de ese campo (clave = "fechaFinAnticipada") -->
+        @Html.ValidationMessage("fechaFinAnticipada", null, new { @class = "text-danger" })
     </div>
 
-    <button type="submit" class="btn btn-danger">Finalizar contrato</button>
+    <!-- Resumen de otros errores generales -->
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <button class="btn btn-danger" type="submit">Confirmar</button>
     <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancelar</a>
 </form>

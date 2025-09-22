@@ -158,5 +158,21 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
                 return x == null ? NotFound() : View("Delete", x);
             }
         }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AuthorizeRol(Roles = "ADMIN")]
+        public IActionResult Suspender(int id, bool suspender)
+        {
+            var rows = _repo.ToggleSuspender(id, suspender);
+            if (rows == 0) return NotFound();
+
+            TempData["Ok"] = suspender ? "Inmueble suspendido" : "Inmueble activado";
+
+            // Redirige al Details del inmueble para feedback,
+            // o si venís desde Propietario, podés enviar un returnUrl
+            return RedirectToAction("Details", new { id });
+        }
     }
 }
