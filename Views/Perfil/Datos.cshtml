@@ -12,7 +12,7 @@
     <img src="@ViewBag.AvatarUrl" alt="avatar" style="width:100px;height:100px;border-radius:50%;object-fit:cover;">
 </div>
 
-<form asp-action="Datos" method="post">
+<form asp-action="Datos" method="post" >
     <input type="hidden" asp-for="Id" />
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 

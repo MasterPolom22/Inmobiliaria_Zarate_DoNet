@@ -4,7 +4,6 @@ using Inmobiliaria_Zarate_DoNet.Models;
 using Inmobiliaria_Zarate_DoNet.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using MySql.Data.MySqlClient;
 
 namespace Inmobiliaria_Zarate_DoNet.Controllers
 {
@@ -17,8 +16,17 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
         // Combos
         private void CargarCombos(int? inmuebleId = null, int? inquilinoId = null)
         {
-            var inm = _repo.GetInmueblesForSelect().Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Texto }).ToList();
-            var inq = _repo.GetInquilinosForSelect().Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Texto }).ToList();
+            var inm = _repo.GetInmueblesForSelect()
+                .Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Texto })
+                .ToList();
+            var inq = _repo.GetInquilinosForSelect()
+                .Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Texto })
+                .ToList();
+
+            // Placeholders al inicio (fuerzan selección válida)
+            inm.Insert(0, new SelectListItem { Value = "", Text = "-- Seleccione inmueble --" });
+            inq.Insert(0, new SelectListItem { Value = "", Text = "-- Seleccione inquilino --" });
+
             ViewBag.Inmuebles = new SelectList(inm, "Value", "Text", inmuebleId?.ToString());
             ViewBag.Inquilinos = new SelectList(inq, "Value", "Text", inquilinoId?.ToString());
         }
@@ -30,7 +38,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             var c = _repo.GetById(id);
             if (c == null) return NotFound();
 
-            // NEW: nombres “Apellido, Nombre” para auditoría
+            // nombres “Apellido, Nombre” para auditoría (si tu repo los resuelve)
             ViewBag.CreadoPorNombre = _repo.GetUsuarioNombre(c.CreadoPor);
             ViewBag.TerminadoPorNombre = _repo.GetUsuarioNombre(c.TerminadoPor);
 
@@ -39,7 +47,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
 
         public IActionResult Create()
         {
-            CargarCombos();
+            CargarCombos(); // deja ambos combos en placeholder
             return View(new Contrato
             {
                 FechaInicio = DateTime.Today,
@@ -54,13 +62,13 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
         {
             if (c.InmuebleId <= 0) ModelState.AddModelError(nameof(c.InmuebleId), "Seleccione un inmueble.");
             if (c.InquilinoId <= 0) ModelState.AddModelError(nameof(c.InquilinoId), "Seleccione un inquilino.");
-            if (c.MontoMensual <= 0) ModelState.AddModelError(nameof(c.MontoMensual), "Monto mensual debe ser > 0.");
+            if (c.MontoMensual <= 0) ModelState.AddModelError(nameof(c.MontoMensual), "Monto mensual debe ser mayor a 0.");
             if (c.FechaFinOriginal <= c.FechaInicio) ModelState.AddModelError(nameof(c.FechaFinOriginal), "Fin debe ser mayor que inicio.");
             if (c.FechaFinAnticipada.HasValue && c.FechaFinAnticipada <= c.FechaInicio)
                 ModelState.AddModelError(nameof(c.FechaFinAnticipada), "Fin anticipado debe ser mayor que inicio.");
             if (!ModelState.IsValid) { CargarCombos(c.InmuebleId, c.InquilinoId); return View(c); }
 
-            // Validación de solapamiento (antes de intentar crear)
+            // Validación de solapamiento (antes de crear)
             if (_repo.ExisteSolapamiento(c.InmuebleId, c.FechaInicio, c.FechaFinOriginal))
             {
                 ModelState.AddModelError("", "Existe un contrato que se superpone con el rango de fechas.");
@@ -68,21 +76,12 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
                 return View(c);
             }
 
-            try
-            {
-                var userId = HttpContext.Session.GetInt32(SessionKeys.UserId) ?? 0;
-                if (userId == 0) userId = 1; // fallback mínimo si no hay session (no debería pasar)
-                c.CreadoPor = userId;
-                var id = _repo.Create(c);
-                TempData["Ok"] = "Contrato creado.";
-                return RedirectToAction(nameof(Details), new { id });
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", $"Error: {ex.Message}");
-                CargarCombos(c.InmuebleId, c.InquilinoId);
-                return View(c);
-            }
+            var userId = HttpContext.Session.GetInt32(SessionKeys.UserId) ?? 0;
+            c.CreadoPor = userId;
+
+            var id = _repo.Create(c);
+            TempData["Ok"] = "Contrato creado.";
+            return RedirectToAction(nameof(Details), new { id });
         }
 
         public IActionResult Edit(int id)
@@ -114,19 +113,11 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
                 return View(c);
             }
 
-            try
-            {
-                var rows = _repo.Update(c);
-                if (rows == 0) return NotFound();
-                TempData["Ok"] = "Contrato actualizado.";
-                return RedirectToAction(nameof(Details), new { id = c.Id });
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", $"Error: {ex.Message}");
-                CargarCombos(c.InmuebleId, c.InquilinoId);
-                return View(c);
-            }
+            var rows = _repo.Update(c);
+            if (rows == 0) return NotFound();
+
+            TempData["Ok"] = "Contrato actualizado.";
+            return RedirectToAction(nameof(Details), new { id = c.Id });
         }
 
         public IActionResult Delete(int id)
@@ -155,8 +146,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             }
         }
 
-        //erminar contrato 
-        // GET:/Terminar/5
+        // Terminar contrato
         public IActionResult Terminar(int id)
         {
             var c = _repo.GetById(id);
@@ -171,17 +161,15 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             var c = _repo.GetById(id);
             if (c == null) return NotFound();
 
-            // Validación de negocio
             if (fechaFinAnticipada < c.FechaInicio)
                 ModelState.AddModelError("fechaFinAnticipada", "La fecha de finalización no puede ser anterior al inicio.");
-
             if (!ModelState.IsValid) return View(c);
 
-            var userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+            var userId = HttpContext.Session.GetInt32(SessionKeys.UserId) ?? 0;
             _repo.Terminar(id, fechaFinAnticipada, userId);
+
             TempData["Ok"] = "Contrato finalizado";
             return RedirectToAction(nameof(Details), new { id });
         }
-        // -----------------------------------------------------------
     }
 }

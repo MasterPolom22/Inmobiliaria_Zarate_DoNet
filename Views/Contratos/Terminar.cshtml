@@ -10,7 +10,7 @@
     <div class="alert alert-success">@TempData["Ok"]</div>
 }
 
-<form asp-action="Terminar" method="post">
+<form asp-action="Terminar" method="post" >
     @Html.AntiForgeryToken()
     <input type="hidden" asp-for="Id" />
 

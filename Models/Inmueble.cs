@@ -1,8 +1,9 @@
-using System;
-
 namespace Inmobiliaria_Zarate_DoNet.Models
 {
     public enum UsoInmueble { RESIDENCIAL = 0, COMERCIAL = 1 }
+
+    
+    public enum EstadoInmueble { DISPONIBLE = 0, SUSPENDIDO = 1 }
 
     public class Inmueble
     {
@@ -16,13 +17,23 @@ namespace Inmobiliaria_Zarate_DoNet.Models
         public decimal? Latitud { get; set; }
         public decimal? Longitud { get; set; }
         public decimal PrecioBase { get; set; }
+
+        
         public bool Disponible { get; set; }
         public bool Suspendido { get; set; }
 
-        // Auditoría
-        public DateTime CreadoEn { get; set; }
+        
+        public EstadoInmueble Estado
+        {
+            get => Suspendido ? EstadoInmueble.SUSPENDIDO : EstadoInmueble.DISPONIBLE;
+            set
+            {
+                Disponible = (value == EstadoInmueble.DISPONIBLE);
+                Suspendido = (value == EstadoInmueble.SUSPENDIDO);
+            }
+        }
 
-        // Solo lectura (JOIN)
+        public DateTime CreadoEn { get; set; }
         public string PropietarioNombreCompleto { get; set; } = "";
         public string TipoNombre { get; set; } = "";
     }

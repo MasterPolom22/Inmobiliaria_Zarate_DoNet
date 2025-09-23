@@ -1,31 +1,28 @@
 @model IEnumerable<Inmobiliaria_Zarate_DoNet.Models.Inmueble>
-<h3>Inmuebles disponibles</h3>
+@{
+    ViewData["Title"] = "Inmuebles disponibles";
+}
+<h2>@ViewData["Title"]</h2>
 
-@if (!Model.Any())
-{
-    <div class="alert alert-info">No hay inmuebles disponibles.</div>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Dirección</th>
-                <th>Uso</th>
-                <th>Amb.</th>
-                <th>Precio base</th>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach (var i in Model)
-        {
-            <tr>
-                <td>@i.Direccion</td>
-                <td>@i.Uso</td>
-                <td>@i.Ambientes</td>
-                <td>@i.PrecioBase.ToString("C")</td>
-            </tr>
-        }
-        </tbody>
-    </table>
-}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Dirección</th><th>Uso</th><th>Amb.</th><th>Precio base</th><th></th>
+    </tr>
+  </thead>
+  <tbody>
+  @foreach (var i in Model) {
+    <tr>
+      <td>@i.Direccion</td>
+      <td>@i.Uso</td>
+      <td>@i.Ambientes</td>
+      <td>@i.PrecioBase.ToString("C")</td>
+      <td>
+        <a asp-action="Details" asp-route-id="@i.Id" class="btn btn-info btn-sm">Ver</a>
+        <a asp-action="Edit" asp-route-id="@i.Id" class="btn btn-warning btn-sm">Editar</a>
+      </td>
+    </tr>
+  }
+  </tbody>
+</table>
+<a asp-action="Index" class="btn btn-secondary">Volver</a>

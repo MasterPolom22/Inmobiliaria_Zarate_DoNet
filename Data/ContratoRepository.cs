@@ -66,13 +66,13 @@ ORDER BY c.creado_en DESC;";
         public bool ExisteSolapamiento(int inmuebleId, DateTime inicio, DateTime fin, int? excludeId = null)
         {
             using var conn = _db.CrearConexion();
-            var sql = @"
-                SELECT COUNT(1)
-                  FROM contrato c
-                 WHERE c.inmueble_id = @inmuebleId
-                   AND (@excludeId IS NULL OR c.id <> @excludeId)
-                   AND c.fecha_inicio <= @fin
-                   AND COALESCE(c.fecha_fin_anticipada, c.fecha_fin_original) >= @inicio";
+            const string sql = @"
+            SELECT COUNT(1)
+              FROM contrato c
+             WHERE c.inmueble_id = @inmuebleId
+               AND (@excludeId IS NULL OR c.id <> @excludeId)
+               AND (c.fecha_inicio <= @fin)
+               AND (COALESCE(c.fecha_fin_anticipada, c.fecha_fin_original) >= @inicio)";
             using var cmd = new MySqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@inmuebleId", inmuebleId);
             cmd.Parameters.AddWithValue("@inicio", inicio.Date);
@@ -232,7 +232,7 @@ UPDATE contrato
             return lista;
         }
 
-         public string? GetUsuarioNombre(int? usuarioId)
+        public string? GetUsuarioNombre(int? usuarioId)
         {
             if (usuarioId == null || usuarioId <= 0) return null;
             using var conn = _db.CrearConexion();

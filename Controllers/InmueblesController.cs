@@ -18,13 +18,20 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
         private void CargarCombos(int? propietarioId = null, int? tipoId = null, UsoInmueble? uso = null)
         {
             var props = _repo.GetPropietariosForSelect()
-                .Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.NombreCompleto }).ToList();
-            var tipos = _repo.GetTiposForSelect()
-                .Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Nombre }).ToList();
-
+                .Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.NombreCompleto })
+                .ToList();
+            // Placeholder al inicio
+            props.Insert(0, new SelectListItem { Value = "", Text = "-- Seleccione propietario --" });
             ViewBag.Propietarios = new SelectList(props, "Value", "Text", propietarioId?.ToString());
+
+            var tipos = _repo.GetTiposForSelect()
+                .Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Nombre })
+                .ToList();
+            // Placeholder al inicio
+            tipos.Insert(0, new SelectListItem { Value = "", Text = "-- Seleccione tipo de inmueble --" });
             ViewBag.Tipos = new SelectList(tipos, "Value", "Text", tipoId?.ToString());
 
+            // Usos (dejamos valores reales; si querés también placeholder, avisame)
             var usos = new List<SelectListItem> {
                 new SelectListItem("RESIDENCIAL", UsoInmueble.RESIDENCIAL.ToString()),
                 new SelectListItem("COMERCIAL", UsoInmueble.COMERCIAL.ToString())
@@ -54,7 +61,6 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
         {
             if (inicio == null || fin == null || fin < inicio)
             {
-                // mostrar form para ingresar fechas
                 ViewBag.Resultados = null;
                 return View();
             }
@@ -69,7 +75,8 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
         public IActionResult Create()
         {
             CargarCombos();
-            return View(new Inmueble { Uso = UsoInmueble.RESIDENCIAL, Disponible = true });
+            // Dejo Uso/Estado con defaults tuyos; los selects de Propietario/Tipo quedan en placeholder
+            return View(new Inmueble { Uso = UsoInmueble.RESIDENCIAL, Estado = EstadoInmueble.DISPONIBLE });
         }
 
         [HttpPost]
@@ -159,7 +166,6 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             }
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AuthorizeRol(Roles = "ADMIN")]
@@ -169,9 +175,6 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             if (rows == 0) return NotFound();
 
             TempData["Ok"] = suspender ? "Inmueble suspendido" : "Inmueble activado";
-
-            // Redirige al Details del inmueble para feedback,
-            // o si venís desde Propietario, podés enviar un returnUrl
             return RedirectToAction("Details", new { id });
         }
     }
