@@ -1,52 +1,33 @@
-@model IEnumerable<Inmobiliaria_Zarate_DoNet.Models.Pago>
-@using Inmobiliaria_Zarate_DoNet.Utils
+@model IEnumerable<Inmobiliaria_Zarate_DoNet.Models.Contrato>
 @{
-    ViewData["Title"] = "Pagos del contrato";
-    var rol = Context.Session.GetString(SessionKeys.UserRol);
+    ViewData["Title"] = "Contratos";
 }
-
 <h2>@ViewData["Title"]</h2>
-
-@if (TempData["Ok"] != null)
-{
-    <div class="alert alert-success">@TempData["Ok"]</div>
-}
-
-<p>
-    <a asp-action="Create" asp-route-contratoId="@ViewBag.ContratoId" class="btn btn-primary">
-        Nuevo Pago
-    </a>
-    <a asp-controller="Contratos" asp-action="Details" asp-route-id="@ViewBag.ContratoId" class="btn btn-secondary">
-        Volver al contrato
-    </a>
-</p>
 
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Número</th>
-            <th>Fecha</th>
-            <th>Importe</th>
-            <th>Detalle</th>
-            <th>Estado</th>
+            <th>Num De Contrato</th>
+            <th>Num De Inmueble</th>
+            <th>Num De Inquilino</th>
+            <th>Fecha de Inicio</th>
+            <th>Fecha de Finalizacion</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-    @foreach (var p in Model)
+    @foreach (var c in Model)
     {
         <tr>
-            <td>@p.Numero</td>
-            <td>@p.Fecha.ToShortDateString()</td>
-            <td>@p.Importe.ToString("C")</td>
-            <td>@p.Detalle</td>
-            <td>@(p.Anulado ? "Anulado" : "Activo")</td>
+            <td>@c.Id</td>
+            <td>@c.InmuebleId</td>
+            <td>@c.InquilinoId</td>
+            <td>@c.FechaInicio.ToShortDateString()</td>
+            <td>@c.FechaFinOriginal.ToShortDateString()</td>
             <td>
-                <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-info btn-sm">Ver</a>
-                @if (rol == "ADMIN" && !p.Anulado)
-                {
-                    <a asp-action="Anular" asp-route-id="@p.Id" class="btn btn-danger btn-sm">Anular</a>
-                }
+                <a asp-action="PorContrato" asp-route-contratoId="@c.Id" class="btn btn-primary btn-sm">
+                    Ver pagos
+                </a>
             </td>
         </tr>
     }

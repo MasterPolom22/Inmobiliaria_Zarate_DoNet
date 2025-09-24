@@ -83,7 +83,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Inmueble x)
         {
-            if (x.PropietarioId <= 0) ModelState.AddModelError(nameof(x.PropietarioId), "Seleccione un propietario.");
+            if (x.PropietarioId < 1) ModelState.AddModelError(nameof(x.PropietarioId), "Seleccione un propietario.");
             if (x.TipoId <= 0) ModelState.AddModelError(nameof(x.TipoId), "Seleccione un tipo.");
             if (string.IsNullOrWhiteSpace(x.Direccion)) ModelState.AddModelError(nameof(x.Direccion), "Dirección obligatoria.");
             if (x.Ambientes < 1) ModelState.AddModelError(nameof(x.Ambientes), "Ambientes debe ser ≥ 1.");

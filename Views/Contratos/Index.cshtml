@@ -14,7 +14,7 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Inmueble</th>
+            <th>Num De Contrato</th>
             <th>Inquilino</th>
             <th>Inicio</th>
             <th>Fin</th>
@@ -27,7 +27,7 @@
         @foreach (var c in Model)
         {
             <tr>
-                <td>@c.InmuebleDireccion</td>
+                <td>@c.Id</td>
                 <td>@c.InquilinoNombre</td>
                 <td>@c.FechaInicio.ToString("dd/MM/yyyy")</td>
                 <td>@c.FechaFinOriginal.ToString("dd/MM/yyyy")</td>

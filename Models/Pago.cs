@@ -10,19 +10,14 @@ namespace Inmobiliaria_Zarate_DoNet.Models
         public DateTime Fecha { get; set; }
         public string Detalle { get; set; } = "";
         public decimal Importe { get; set; }
-        public bool Anulado { get; set; }
 
-        // Auditoría
-        public int CreadoPor { get; set; }
-        public int? AnuladoPor { get; set; }
+        public bool Anulado { get; set; }
+        public int CreadoPorId { get; set; }
+        public int? AnuladoPorId { get; set; }
         public DateTime CreadoEn { get; set; }
 
-        // Opcional: nombres de usuarios si los traemos con JOIN
+        // Opcional para mostrar nombres si luego hacés JOIN
         public string? CreadoPorNombre { get; set; }
         public string? AnuladoPorNombre { get; set; }
-        public DateTime? AnuladoEn { get; set; }
-
-        // Solo lectura (JOIN con contrato/inmueble/inq)
-        public string ContratoResumen { get; set; } = "";
     }
 }

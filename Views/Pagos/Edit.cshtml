@@ -1,0 +1,25 @@
+@model Inmobiliaria_Zarate_DoNet.Models.Pago
+@{
+    ViewData["Title"] = "Editar pago";
+}
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-2">
+        <strong>Contrato:</strong> @Model.ContratoId |
+        <strong>N°:</strong> @Model.Numero |
+        <strong>Fecha:</strong> @Model.Fecha.ToShortDateString() |
+        <strong>Importe:</strong> @Model.Importe.ToString("C")
+    </div>
+
+    <div class="mb-3">
+        <label>Detalle</label>
+        <input name="Detalle" class="form-control" value="@Model.Detalle" />
+    </div>
+
+    <button class="btn btn-primary">Guardar</button>
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Volver</a>
+</form>

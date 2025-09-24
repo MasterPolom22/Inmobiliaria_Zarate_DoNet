@@ -23,7 +23,8 @@
     <dd class="col-sm-9">@Model.FechaFinOriginal.ToString("yyyy-MM-dd")</dd>
 
     <dt class="col-sm-3">Fecha fin efectiva</dt>
-    <dd class="col-sm-9">@((Model.FechaFinAnticipada.HasValue) ? Model.FechaFinAnticipada.Value.ToString("yyyy-MM-dd") : "-")</dd>
+    <dd class="col-sm-9">@((Model.FechaFinAnticipada.HasValue) ? Model.FechaFinAnticipada.Value.ToString("yyyy-MM-dd") :
+                "-")</dd>
 
     <dt class="col-sm-3">Monto mensual</dt>
     <dd class="col-sm-9">@Model.MontoMensual.ToString("C")</dd>
@@ -56,6 +57,9 @@
 }
 
 <p class="mt-3">
+    <a asp-controller="Pagos" asp-action="PorContrato" asp-route-contratoId="@Model.Id" class="btn btn-outline-primary">
+        Ver / cargar pagos
+    </a>
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Editar</a>
     @if (rol == "ADMIN")
     {

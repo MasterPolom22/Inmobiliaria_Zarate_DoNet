@@ -1,0 +1,16 @@
+@model Inmobiliaria_Zarate_DoNet.Models.Pago
+@{
+    ViewData["Title"] = "Anular pago";
+}
+<h2>@ViewData["Title"]</h2>
+
+<div class="alert alert-warning">
+    ¿Confirmás que querés <strong>anular</strong> el pago N° @Model.Numero del contrato @Model.ContratoId?
+</div>
+
+<form asp-action="Delete" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <button class="btn btn-danger" type="submit">Anular</button>
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancelar</a>
+</form>
