@@ -31,7 +31,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
             tipos.Insert(0, new SelectListItem { Value = "", Text = "-- Seleccione tipo de inmueble --" });
             ViewBag.Tipos = new SelectList(tipos, "Value", "Text", tipoId?.ToString());
 
-            // Usos (dejamos valores reales; si querés también placeholder, avisame)
+            // Usos 
             var usos = new List<SelectListItem> {
                 new SelectListItem("RESIDENCIAL", UsoInmueble.RESIDENCIAL.ToString()),
                 new SelectListItem("COMERCIAL", UsoInmueble.COMERCIAL.ToString())
@@ -75,7 +75,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
         public IActionResult Create()
         {
             CargarCombos();
-            // Dejo Uso/Estado con defaults tuyos; los selects de Propietario/Tipo quedan en placeholder
+           
             return View(new Inmueble { Uso = UsoInmueble.RESIDENCIAL, Estado = EstadoInmueble.DISPONIBLE });
         }
 

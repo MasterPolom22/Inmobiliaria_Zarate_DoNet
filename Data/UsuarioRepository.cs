@@ -93,7 +93,7 @@ SELECT LAST_INSERT_ID();";
             cmd.Parameters.AddWithValue("@a", u.Apellido);
             cmd.Parameters.AddWithValue("@e", u.Email.ToLower());
             cmd.Parameters.AddWithValue("@p", hash);
-            cmd.Parameters.AddWithValue("@r", u.Rol.ToString()); // 'ADMIN'|'EMPLEADO'
+            cmd.Parameters.AddWithValue("@r", u.Rol.ToString()); 
             cmd.Parameters.AddWithValue("@act", u.Activo);
             return Convert.ToInt32(cmd.ExecuteScalar());
         }

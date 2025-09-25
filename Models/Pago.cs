@@ -16,7 +16,7 @@ namespace Inmobiliaria_Zarate_DoNet.Models
         public int? AnuladoPorId { get; set; }
         public DateTime CreadoEn { get; set; }
 
-        // Opcional para mostrar nombres si luego hacés JOIN
+      
         public string? CreadoPorNombre { get; set; }
         public string? AnuladoPorNombre { get; set; }
     }

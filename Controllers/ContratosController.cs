@@ -105,7 +105,7 @@ namespace Inmobiliaria_Zarate_DoNet.Controllers
                 ModelState.AddModelError(nameof(c.FechaFinAnticipada), "Fin anticipado debe ser mayor que inicio.");
             if (!ModelState.IsValid) { CargarCombos(c.InmuebleId, c.InquilinoId); return View(c); }
 
-            // Validación de solapamiento excluyendo este contrato
+            // Validación de solapamiento 
             if (_repo.ExisteSolapamiento(c.InmuebleId, c.FechaInicio, c.FechaFinOriginal, excludeId: c.Id))
             {
                 ModelState.AddModelError("", "Existe un contrato que se superpone con el rango de fechas.");

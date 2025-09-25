@@ -23,7 +23,7 @@ namespace Inmobiliaria_Zarate_DoNet.Data
             using var rd = cmd.ExecuteReader();
             while (rd.Read())
             {
-                lista.Add(Map(rd)); // <- ahora es null-safe
+                lista.Add(Map(rd)); 
             }
             return lista;
         }

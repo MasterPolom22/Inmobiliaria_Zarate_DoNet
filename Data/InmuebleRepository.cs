@@ -203,7 +203,7 @@ WHERE id = @id;";
             return lista;
         }
 
-        // 1) Disponibles (no miramos contratos, solo flag de la tabla)
+        // 1) Disponibles 
         public List<Inmueble> GetDisponibles()
         {
             var lista = new List<Inmueble>();
@@ -286,7 +286,7 @@ WHERE id = @id;";
             using var rd = cmd.ExecuteReader();
             while (rd.Read())
             {
-                lista.Add(MapInmueble(rd)); // usa tu mapper existente
+                lista.Add(MapInmueble(rd)); 
             }
             return lista;
         }
@@ -302,7 +302,7 @@ WHERE id = @id;";
             return cmd.ExecuteNonQuery();
         }
 
-         // Ajustá este mapper a tu modelo exacto si difiere
+        
         private Inmueble Map(MySqlDataReader rd) => new Inmueble
         {
             Id = rd.GetInt32("id"),

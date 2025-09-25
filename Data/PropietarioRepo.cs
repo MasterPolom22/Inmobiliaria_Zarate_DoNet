@@ -122,7 +122,7 @@ WHERE id = @id;";
             return cmd.ExecuteNonQuery();
         }
 
-        /// <summary>DNI único (opcional para validar en Create/Edit).</summary>
+        
         public bool ExistsDni(string dni, int? excludeId = null)
         {
             using var conn = _db.CrearConexion();

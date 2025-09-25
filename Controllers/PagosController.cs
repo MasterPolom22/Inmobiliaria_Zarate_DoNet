@@ -35,7 +35,7 @@ public class PagosController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult Index(int contratoId)
     {
-        var contratos = _contratoRepo.GetAll(); // o un método resumido
+        var contratos = _contratoRepo.GetAll(); 
         return View(contratos);
     }
 
