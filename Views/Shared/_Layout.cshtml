@@ -107,7 +107,33 @@
         </div>
     </footer>
 
+   
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/localization/messages_es.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    @* (Opcional) Integración visual con Bootstrap 5 *@
+    <script>
+        (function () {
+            if (!$.validator) return;
+            $.validator.setDefaults({
+                highlight: function (el) { $(el).addClass('is-invalid').removeClass('is-valid'); },
+                unhighlight: function (el) { $(el).removeClass('is-invalid').addClass('is-valid'); },
+                errorElement: 'div',
+                errorClass: 'invalid-feedback',
+                errorPlacement: function (err, el) {
+                    const $el = $(el);
+                    if ($el.parent('.input-group').length) err.insertAfter($el.parent());
+                    else err.insertAfter($el);
+                }
+            });
+        })();
+    </script>
+
     @RenderSection("Scripts", required: false)
 </body>
 

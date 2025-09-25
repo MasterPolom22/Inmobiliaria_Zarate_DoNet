@@ -1,43 +1,53 @@
 @model Inmobiliaria_Zarate_DoNet.Models.Propietario
 @{
     ViewData["Title"] = "Nuevo propietario";
+    bool Err(string name) => ViewData.ModelState[name]?.Errors?.Count > 0;
 }
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
- @* <partial name="~/Views/Shared/_Alertas.cshtml" />// *@
 
-<h2>Nuevo propietario</h2>
+<h2 class="mb-3">Nuevo propietario</h2>
 
-<form asp-action="Create" method="post"  class="mt-3">
+<!-- Resumen de errores "globales" (ModelOnly) -->
+<div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+<form asp-action="Create" method="post" novalidate class="mt-3">
     @Html.AntiForgeryToken()
 
     <div class="mb-3">
         <label asp-for="Dni" class="form-label"></label>
-        <input asp-for="Dni" class="form-control" />
-        <span asp-validation-for="Dni" class="text-danger"></span>
+        <input asp-for="Dni" class="form-control @(Err(nameof(Model.Dni)) ? "is-invalid" : "")" />
+        <span asp-validation-for="Dni" class="invalid-feedback"></span>
     </div>
+
     <div class="mb-3">
         <label asp-for="Apellido" class="form-label"></label>
-        <input asp-for="Apellido" class="form-control" />
-        <span asp-validation-for="Apellido" class="text-danger"></span>
+        <input asp-for="Apellido" class="form-control @(Err(nameof(Model.Apellido)) ? "is-invalid" : "")" />
+        <span asp-validation-for="Apellido" class="invalid-feedback"></span>
     </div>
+
     <div class="mb-3">
         <label asp-for="Nombre" class="form-label"></label>
-        <input asp-for="Nombre" class="form-control" />
-        <span asp-validation-for="Nombre" class="text-danger"></span>
+        <input asp-for="Nombre" class="form-control @(Err(nameof(Model.Nombre)) ? "is-invalid" : "")" />
+        <span asp-validation-for="Nombre" class="invalid-feedback"></span>
     </div>
+
     <div class="mb-3">
         <label asp-for="Telefono" class="form-label"></label>
-        <input asp-for="Telefono" class="form-control" />
-        <span asp-validation-for="Telefono" class="text-danger"></span>
+        <input asp-for="Telefono" class="form-control @(Err(nameof(Model.Telefono)) ? "is-invalid" : "")" />
+        <span asp-validation-for="Telefono" class="invalid-feedback"></span>
     </div>
+
     <div class="mb-3">
-        <label asp-for="Email"  class="form-label"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control @(Err(nameof(Model.Email)) ? "is-invalid" : "")" />
+        <span asp-validation-for="Email" class="invalid-feedback"></span>
     </div>
 
     <button type="submit" class="btn btn-primary">Guardar</button>
     <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
 </form>
 
-@section Scripts { <partial name="_ValidationScriptsPartial" /> }
+@* Importante:
+   - No renderizamos _Alertas.cshtml aquí (lo hace el Layout).
+   - No incluimos _ValidationScriptsPartial porque los scripts ya van en el Layout.
+   Si en tu proyecto aún se llaman desde las vistas, podés dejar esta sección vacía o quitarla. *@
+@section Scripts { }

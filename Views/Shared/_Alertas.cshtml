@@ -29,10 +29,11 @@
     </div>
 }
 
-@* (Opcional) Si querés mostrar errores de ModelState “globales” cuando la vista no los dibuja *@
-@if (ViewData.ModelState.ErrorCount > 0 && !(bool?)ViewData["OcultarSummaryGlobal"] == true)
+@* Si quisieras habilitar un resumen global opcional DESDE la vista:
+@if (ViewData.ModelState.ErrorCount > 0 && (bool?)ViewData["MostrarSummaryGlobal"] == true)
 {
     <div class="alert alert-danger">
         <div asp-validation-summary="ModelOnly"></div>
     </div>
 }
+*@
