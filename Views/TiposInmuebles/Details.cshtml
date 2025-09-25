@@ -1,9 +1,21 @@
 @model Inmobiliaria_Zarate_DoNet.Models.TipoInmueble
-<h2>Detalle Tipo de Inmueble</h2>
+@{
+    ViewData["Title"] = "Detalle Tipo de Inmueble";
+}
+<h2>@ViewData["Title"]</h2>
+
 <dl class="row">
-    <dt class="col-sm-2">Nombre</dt><dd class="col-sm-10">@Model.Nombre</dd>
-    <dt class="col-sm-2">Activo</dt><dd class="col-sm-10">@(Model.Activo ? "Sí" : "No")</dd>
-    <dt class="col-sm-2">Creado</dt><dd class="col-sm-10">@Model.CreadoEn</dd>
+    <dt class="col-sm-2">Nombre</dt>
+    <dd class="col-sm-10">@Model.Nombre</dd>
+
+    <dt class="col-sm-2">Activo</dt>
+    <dd class="col-sm-10">@(Model.Activo ? "Sí" : "No")</dd>
+
+    <dt class="col-sm-2">Creado</dt>
+    <dd class="col-sm-10">@Model.CreadoEn</dd>
 </dl>
-<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
-<a asp-action="Index" class="btn btn-secondary">Volver</a>
+
+<div class="mt-3">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+</div>

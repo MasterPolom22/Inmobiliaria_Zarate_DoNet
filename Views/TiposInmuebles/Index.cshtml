@@ -1,19 +1,21 @@
 @model IEnumerable<Inmobiliaria_Zarate_DoNet.Models.TipoInmueble>
-
 @{
     ViewData["Title"] = "Tipos de Inmuebles";
+    var esAdmin = (Context.Session.GetString("UserRol") ?? "") == "ADMIN";
 }
 <h2>@ViewData["Title"]</h2>
+
 <p>
     <a asp-action="Create" class="btn btn-primary">Nuevo Tipo</a>
 </p>
-<table class="table table-striped">
+
+<table class="table table-striped align-middle">
     <thead>
         <tr>
             <th>Nombre</th>
             <th>Activo</th>
             <th>Creado</th>
-            <th></th>
+            <th style="width:220px;"></th>
         </tr>
     </thead>
     <tbody>
@@ -26,7 +28,10 @@
             <td>
                 <a asp-action="Details" asp-route-id="@t.Id" class="btn btn-info btn-sm">Ver</a>
                 <a asp-action="Edit" asp-route-id="@t.Id" class="btn btn-warning btn-sm">Editar</a>
+                @if (esAdmin)
+                {
                 <a asp-action="Delete" asp-route-id="@t.Id" class="btn btn-danger btn-sm">Eliminar</a>
+                }
             </td>
         </tr>
     }

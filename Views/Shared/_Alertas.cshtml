@@ -1,12 +1,38 @@
-@* Muestra mensajes y errores resumidos *@
-@if (TempData["Ok"] != null)
-{
-    <div class="alert alert-success">@TempData["Ok"]</div>
+@* Views/Shared/_Alertas.cshtml *@
+@{
+    var ok = TempData["Ok"] as string;
+    var err = TempData["Error"] as string ?? TempData["Err"] as string;
+    var warn = TempData["Warn"] as string ?? TempData["Warning"] as string;
 }
 
-@if (!ViewData.ModelState.IsValid)
+@if (!string.IsNullOrEmpty(ok))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @ok
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(warn))
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        @warn
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(err))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @err
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@* (Opcional) Si querés mostrar errores de ModelState “globales” cuando la vista no los dibuja *@
+@if (ViewData.ModelState.ErrorCount > 0 && !(bool?)ViewData["OcultarSummaryGlobal"] == true)
 {
     <div class="alert alert-danger">
-        Revisá los errores del formulario.
+        <div asp-validation-summary="ModelOnly"></div>
     </div>
 }

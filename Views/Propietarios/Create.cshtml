@@ -2,7 +2,8 @@
 @{
     ViewData["Title"] = "Nuevo propietario";
 }
-<partial name="~/Views/Shared/_Alertas.cshtml" />
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+ @* <partial name="~/Views/Shared/_Alertas.cshtml" />// *@
 
 <h2>Nuevo propietario</h2>
 
@@ -30,7 +31,7 @@
         <span asp-validation-for="Telefono" class="text-danger"></span>
     </div>
     <div class="mb-3">
-        <label asp-for="Email" class="form-label"></label>
+        <label asp-for="Email"  class="form-label"></label>
         <input asp-for="Email" class="form-control" />
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
