@@ -97,7 +97,6 @@
     </header>
 
     <main role="main" class="container mb-5">
-        @await Html.PartialAsync("_Alertas")   @* ← Unificado *@
         @RenderBody()
     </main>
 
@@ -108,7 +107,7 @@
         </div>
     </footer>
 
-   
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     @RenderSection("Scripts", required: false)
 </body>
 
