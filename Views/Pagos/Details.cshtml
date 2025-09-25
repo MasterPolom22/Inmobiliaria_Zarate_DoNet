@@ -20,13 +20,23 @@
     <hr />
     <h5>Auditoría</h5>
     <dl class="row">
-        <dt class="col-sm-3">Creado por</dt>
-        <dd class="col-sm-9">@Model.CreadoPorId</dd>
-        <dt class="col-sm-3">Anulado por</dt>
-        <dd class="col-sm-9">@Model.AnuladoPorId</dd>
-        <dt class="col-sm-3">Creado en</dt>
-        <dd class="col-sm-9">@Model.CreadoEn</dd>
-    </dl>
+    <dt class="col-sm-3">Creado por</dt>
+    <dd class="col-sm-9">
+        @(Model.CreadoPorNombre ?? $"Usuario #{Model.CreadoPorId}")
+    </dd>
+
+    <dt class="col-sm-3">Anulado por</dt>
+    <dd class="col-sm-9">
+        @if (Model.AnuladoPorId == null) {
+            <span class="text-muted">—</span>
+        } else {
+            @(Model.AnuladoPorNombre ?? $"Usuario #{Model.AnuladoPorId}")
+        }
+    </dd>
+
+    <dt class="col-sm-3">Fecha de creado</dt>
+    <dd class="col-sm-9">@Model.CreadoEn</dd>
+</dl>
 }
 
 <div class="mt-3">

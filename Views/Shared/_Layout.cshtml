@@ -4,10 +4,12 @@
     var rol = Context.Session.GetString(SessionKeys.UserRol) ?? "";
     var esAdmin = rol == "ADMIN";
     var userName = Context.Session.GetString(SessionKeys.UserNombre) ?? "";
-    var active = (string? ctrl) => string.Equals(ViewContext.RouteData.Values["controller"]?.ToString(), ctrl, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+    var active = (string? ctrl) => string.Equals(ViewContext.RouteData.Values["controller"]?.ToString(), ctrl,
+    StringComparison.OrdinalIgnoreCase) ? "active" : "";
 }
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,12 +18,14 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/_Layout.cshtml.css" asp-append-version="true" />
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
             <div class="container">
                 <a class="navbar-brand" asp-controller="Home" asp-action="Index">Inmobiliaria</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Menú">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu"
+                    aria-controls="menu" aria-expanded="false" aria-label="Menú">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
@@ -29,15 +33,28 @@
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         @if (isLogged)
                         {
-                            <li class="nav-item"><a class="nav-link @active("Propietarios")" asp-controller="Propietarios" asp-action="Index">Propietarios</a></li>
-                            <li class="nav-item"><a class="nav-link @active("Inquilinos")" asp-controller="Inquilinos" asp-action="Index">Inquilinos</a></li>
-                            <li class="nav-item"><a class="nav-link @active("Inmuebles")" asp-controller="Inmuebles" asp-action="Index">Inmuebles</a></li>
-                            <li class="nav-item"><a class="nav-link @active("Contratos")" asp-controller="Contratos" asp-action="Index">Contratos</a></li>
-                            <li class="nav-item"><a class="nav-link @active("Pagos")" asp-controller="Pagos" asp-action="Index">Pagos</a></li>
+                            <li class="nav-item"><a class="nav-link @active("Propietarios")" asp-controller="Propietarios"
+                                    asp-action="Index">Propietarios</a></li>
+                            <li class="nav-item"><a class="nav-link @active("Inquilinos")" asp-controller="Inquilinos"
+                                    asp-action="Index">Inquilinos</a></li>
+                            <li class="nav-item"><a class="nav-link @active("Inmuebles")" asp-controller="Inmuebles"
+                                    asp-action="Index">Inmuebles</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link @active("TiposInmuebles")" asp-controller="TiposInmuebles"
+                                    asp-action="Index">
+                                    Tipos de Inmuebles
+                                </a>
+                            </li>
+                            <li class="nav-item"><a class="nav-link @active("Contratos")" asp-controller="Contratos"
+                                    asp-action="Index">Contratos</a></li>
+                            <li class="nav-item"><a class="nav-link @active("Pagos")" asp-controller="Pagos"
+                                    asp-action="Index">Pagos</a></li>
+
                             @* Solo admin ve Usuarios *@
                             @if (esAdmin)
                             {
-                                <li class="nav-item"><a class="nav-link @active("Usuarios")" asp-controller="Usuarios" asp-action="Index">Usuarios</a></li>
+                                <li class="nav-item"><a class="nav-link @active("Usuarios")" asp-controller="Usuarios"
+                                        asp-action="Index">Usuarios</a></li>
                             }
                         }
                     </ul>
@@ -46,14 +63,19 @@
                         @if (isLogged)
                         {
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="perfilMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a class="nav-link dropdown-toggle" href="#" id="perfilMenu" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
                                     @userName (@rol)
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perfilMenu">
-                                    <li><a class="dropdown-item" asp-controller="Perfil" asp-action="Datos">Mi perfil</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Perfil" asp-action="Datos">Mi perfil</a>
+                                    </li>
                                     <li><a class="dropdown-item" asp-controller="Perfil" asp-action="Avatar">Avatar</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Perfil" asp-action="Password">Contraseña</a></li>
-                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item" asp-controller="Perfil"
+                                            asp-action="Password">Contraseña</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider" />
+                                    </li>
                                     <li>
                                         <form asp-controller="Auth" asp-action="Logout" method="post" class="px-3">
                                             @Html.AntiForgeryToken()
@@ -65,7 +87,8 @@
                         }
                         else
                         {
-                            <li class="nav-item"><a class="nav-link @active("Auth")" asp-controller="Auth" asp-action="Login">Ingresar</a></li>
+                            <li class="nav-item"><a class="nav-link @active("Auth")" asp-controller="Auth"
+                                    asp-action="Login">Ingresar</a></li>
                         }
                     </ul>
                 </div>
@@ -87,4 +110,5 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     @RenderSection("Scripts", required: false)
 </body>
+
 </html>

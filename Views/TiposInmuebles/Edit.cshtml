@@ -1,0 +1,17 @@
+@model Inmobiliaria_Zarate_DoNet.Models.TipoInmueble
+<h2>Editar Tipo de Inmueble</h2>
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id"/>
+    <div class="mb-3">
+        <label asp-for="Nombre"></label>
+        <input asp-for="Nombre" class="form-control"/>
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+    </div>
+    <div class="form-check mb-3">
+        <input asp-for="Activo" class="form-check-input"/>
+        <label asp-for="Activo" class="form-check-label"></label>
+    </div>
+    <button class="btn btn-primary">Guardar</button>
+    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+</form>

@@ -28,19 +28,38 @@ namespace Inmobiliaria_Zarate_DoNet.Data
             return lista;
         }
 
-        public Pago? GetById(int id)
-        {
-            using var conn = _db.CrearConexion();
-            const string sql = @"
-                SELECT id, contrato_id, numero, fecha, detalle, importe,
-                       anulado, creado_por, anulado_por, creado_en
-                  FROM pago
-                 WHERE id=@id";
-            using var cmd = new MySqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@id", id);
-            using var rd = cmd.ExecuteReader();
-            return rd.Read() ? Map(rd) : null;
-        }
+       public Pago? GetById(int id)
+{
+    using var conn = _db.CrearConexion();
+    const string sql = @"
+        SELECT p.id, p.contrato_id, p.numero, p.fecha, p.detalle, p.importe,
+               p.anulado, p.creado_por, p.anulado_por, p.creado_en,
+               CONCAT(uc.nombre, ' ', uc.apellido) AS creado_por_nombre,
+               CONCAT(ua.nombre, ' ', ua.apellido) AS anulado_por_nombre
+          FROM pago p
+          LEFT JOIN usuario uc ON uc.id = p.creado_por
+          LEFT JOIN usuario ua ON ua.id = p.anulado_por
+         WHERE p.id=@id";
+    using var cmd = new MySqlCommand(sql, conn);
+    cmd.Parameters.AddWithValue("@id", id);
+    using var rd = cmd.ExecuteReader();
+    if (!rd.Read()) return null;
+
+    return new Pago {
+        Id = rd.GetInt32("id"),
+        ContratoId = rd.GetInt32("contrato_id"),
+        Numero = rd.GetInt32("numero"),
+        Fecha = rd.GetDateTime("fecha"),
+        Detalle = rd.IsDBNull(rd.GetOrdinal("detalle")) ? "" : rd.GetString("detalle"),
+        Importe = rd.GetDecimal("importe"),
+        Anulado = rd.GetBoolean("anulado"),
+        CreadoPorId = rd.GetInt32("creado_por"),
+        AnuladoPorId = rd.IsDBNull(rd.GetOrdinal("anulado_por")) ? (int?)null : rd.GetInt32("anulado_por"),
+        CreadoEn = rd.GetDateTime("creado_en"),
+        CreadoPorNombre = rd.IsDBNull(rd.GetOrdinal("creado_por_nombre")) ? null : rd.GetString("creado_por_nombre"),
+        AnuladoPorNombre = rd.IsDBNull(rd.GetOrdinal("anulado_por_nombre")) ? null : rd.GetString("anulado_por_nombre"),
+    };
+}
 
         private int NextNumero(int contratoId, MySqlConnection conn, MySqlTransaction tx)
         {

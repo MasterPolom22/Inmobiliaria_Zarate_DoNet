@@ -1,0 +1,11 @@
+@model Inmobiliaria_Zarate_DoNet.Models.TipoInmueble
+<h2>Eliminar Tipo de Inmueble</h2>
+<div class="alert alert-danger">
+    ¿Seguro que desea eliminar el tipo <strong>@Model.Nombre</strong>?
+</div>
+<form asp-action="Delete" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id"/>
+    <button class="btn btn-danger">Eliminar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
