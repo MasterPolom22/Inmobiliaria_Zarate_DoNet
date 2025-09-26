@@ -38,7 +38,7 @@ Funcionalidades principales
 - UI: vistas  con Bootstrap, mensajes  y alertas de confirmación.
  
 -Base de datos: `inmobiliariadb`
-- Contiene los campos de auditoría (`creado_por`).
+
 
  Usuarios de prueba
 
