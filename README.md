@@ -33,7 +33,7 @@ Funcionalidades principales
   - Validación de superposición de fechas(no terminado).
   - Auditoría: quién creó y quién terminó el contrato solo el admin lo ve.
 
-- Pagos:
+- Pagos(este modulo esta incompleto):
   - Auditoría. Registrar qué usuario creó un contrato y, en caso que corresponda, quien lo terminó. Similar para pagos, quién lo creó y, en caso que corresponda, quien lo  anuló. Esta información de auditoría sólo es visible para administradores y en una vista de detalles de la entidad correspondiente.
 - UI: vistas  con Bootstrap, mensajes  y alertas de confirmación.
  
